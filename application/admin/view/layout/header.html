@@ -1,0 +1,57 @@
+
+    <!--header-->
+  	<nav class="navbar navbar-expand-sm navbar-light fixed-top bg-info pl-0" id="header">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarToggler">
+    	  <a class="text-center" href="" id="header-brand"><!-- <img src="__ADMIN__/images/logo.png" width="200" height="48" alt="Brand"> -->Brand</a>
+        <button class="btn btn-info menu-btn" data-toggle="tooltip" data-placement="bottom" title="收起菜单" onclick="menu_animate()"><i class="fa fa-align-justify"></i></button>
+        <ul class="navbar-nav mr-auto" id="module">
+          <li class="nav-item active nav-chose" onclick="module_click(this)">
+            <a class="nav-link text-white pt-0 pb-0 btn-lg" href="#">首页 <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item" onclick="module_click(this)">
+            <a class="nav-link text-white pt-0 pb-0 btn-lg" href="#">库存</a>
+          </li>
+          <li class="nav-item" onclick="module_click(this)">
+            <a class="nav-link text-white pt-0 pb-0 btn-lg" href="#">展厅</a>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav" id="module-action">
+          <li class="nav-item pr-2">
+            <a href="javacript:void(0)" class="nav-link pt-0 pb-0 btn text-white" id="user-info">
+              <img class="rounded-circle" src="__ADMIN__/images/user3.jpg" width="38" height="38" alt="用户头像">
+            </a>
+          </li>
+          <li class="nav-item pr-2"><a class="nav-link btn text-white" id="change-theme" href="#">换肤</a></li>
+          <li class="nav-item pr-2"><a class="nav-link btn text-white" href="#" id="logout">退出</a></li>
+        </ul>
+      </div>
+  	</nav>
+    <!--end-header-->
+
+  <div>
+    <!--user profile card-->
+    <div class="card bg-white text-center shadow hide" style="width: 18rem;position:absolute;z-index: 999;" id="user-info-card">
+      <div class="card-header">
+        <img class="rounded-circle" width="150" height="150" src="__ADMIN__/images/user3.jpg" alt="Card image cap">
+        <h3>username</h3>
+        <p>注册时间：2018-08-08 08:00:00</p>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-sm btn-primary pull-left">个人中心</button>
+        <button class="btn btn-sm btn-success pull-right">编辑资料</button>
+      </div>
+    </div>
+
+    <!--change theme card-->
+    <div class="card bg-wihte text-center shadow hide" style="width: 12rem;position:absolute;z-index: 999;" id="change-theme-card">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item p-0"><button class="btn btn-primary w-100">风格一</button></li>
+        <li class="list-group-item p-0"><button class="btn btn-info w-100">风格二</button></li>
+        <li class="list-group-item p-0"><button class="btn btn-dark w-100">风格三</button></li>
+      </ul>
+    </div>
+  </div>

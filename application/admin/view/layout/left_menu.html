@@ -1,0 +1,32 @@
+<!--left_menu-->
+<div class="bg-dark" id="left-menu">
+  <div class="w-100">
+    <ul class="nav flex-column text-left p-0 m-0 w-100 pull-left">
+      <li class="nav-item text-center">
+        <a class="nav-link border-bottom border-info" href="javascript:void(0)">菜 单 栏</a>
+      </li>
+      <li class="nav-item active menu-chose">
+        <a class="nav-link" href="#"><i class="fa fa-tachometer">&nbsp;&nbsp;</i><span>首页</span></a>
+      </li>
+      <{for start='1' end="16"}>
+      <li class="nav-item">
+        <a class="nav-link" href="#"><i class="fa fa-cog">&nbsp;&nbsp;</i><span>一 级 菜 单<{$i}></span><i class="pl-3 fa fa-caret-down"></i></a>
+        <ul class="text-left pl-2 sub-menu hide">
+          <li class="nav-item"><a class="nav-link" href="javascript:void(0)" content-id="tab-content-<{$i}>" onclick="open_page('admin/index/test', this)"><i class="fa fa-cog"></i>&nbsp;&nbsp;<span>二 级 菜 单</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><i class="fa fa-cog"></i>&nbsp;&nbsp;<span>二 级 菜 单</span><i class="pl-3 fa fa-caret-down"></i></a>
+            <ul class="text-left pl-2 sub-menu hide">
+              <li class="nav-item"><a class="nav-link"  href="javascript:void(0)" content-id="tab-content1-<{$i}>" onclick="open_page('admin/index/test', this)"><i class="fa fa-cog"></i>&nbsp;&nbsp;<span>三 级 菜 单</span></a></li>
+              <li class="nav-item"><a class="nav-link"  href="javascript:void(0)" content-id="tab-content2-<{$i}>" onclick="open_page('admin/index/test', this)"><i class="fa fa-cog"></i>&nbsp;&nbsp;<span>三 级 菜 单</span></a></li>
+              <li class="nav-item"><a class="nav-link"  href="javascript:void(0)" content-id="tab-content3-<{$i}>" onclick="open_page('admin/index/test', this)"><i class="fa fa-cog"></i>&nbsp;&nbsp;<span>三 级 菜 单</span></a></li>
+              <li class="nav-item"><a class="nav-link"  href="javascript:void(0)" content-id="tab-content4-<{$i}>" onclick="open_page('admin/index/test', this)"><i class="fa fa-cog"></i>&nbsp;&nbsp;<span>三 级 菜 单</span></a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="#"><i class="fa fa-cog"></i>&nbsp;&nbsp;<span>二 级 菜 单</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><i class="fa fa-cog"></i>&nbsp;&nbsp;<span>二 级 菜 单</span></a></li>
+        </ul>
+      </li>
+      <{/for}>
+    </ul>
+  </div>
+</div>
+<!--end-left_menu-->

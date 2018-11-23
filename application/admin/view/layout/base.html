@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="__BOOTSTRAP__/css/bootstrap.min.css" crossorigin="anonymous">
+    <!-- FontAwesome CSS 所有图标请参照http://www.fontawesome.com.cn/faicons/-->
+    <link rel="stylesheet" href="__FONTAWESOME__/css/font-awesome.min.css" crossorigin="anonymous">
+    <!-- admin-main CSS -->
+    <link rel="stylesheet" href="__ADMIN__/css/main.css" crossorigin="anonymous">
+    <title><{$title ?? 'dms_后台管理'}></title>
+    <!-- jQuery  Bootstrap JS -->
+    <script src="__BOOTSTRAP__/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script src="__BOOTSTRAP__/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <{block name="style"}> <{/block}>
+  </head>
+  <body>
+
+    <{block name="header"}><{include file="../application/admin/view/layout/header.html" /}><{/block}>
+
+    <{block name="left_nume"}><{include file="../application/admin/view/layout/left_menu.html" /}><{/block}>
+
+    <{block name="main"}><{include file="../application/admin/view/layout/main.html" /}><{/block}>
+
+    <{block name="footer"}><{include file="../application/admin/view/layout/footer.html" /}><{/block}>
+    
+    <{block name="javascript"}> <{/block}>
+
+    <!-- admin-main JS -->
+    <script src="__ADMIN__/js/main.js" crossorigin="anonymous"></script>
+</body>
+</html>
+  
