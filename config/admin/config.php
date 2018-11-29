@@ -39,57 +39,18 @@ return [
         // 标签库标签结束标记
         'taglib_end'   => '}>',
     ],
-
-    // 视图输出字符串内容替换
+    
+    // +----------------------------------------------------------------------
+    // | 视图输出字符串内容替换
+    // +----------------------------------------------------------------------
     'view_replace_str'       => [
         '__BOOTSTRAP__' => \think\Request::instance()->root(true) . '/static/bootstrap',
         '__ADMIN__' =>  \think\Request::instance()->root(true) . '/static/admin',
         '__FONTAWESOME__' => \think\Request::instance()->root(true) . '/static/fontAwesome'
     ],
-    // 默认跳转页面对应的模板文件
-    'dispatch_success_tmpl'  => THINK_PATH . 'tpl' . DS . 'dispatch_jump.tpl',
-    'dispatch_error_tmpl'    => THINK_PATH . 'tpl' . DS . 'dispatch_jump.tpl',
     
     // +----------------------------------------------------------------------
-    // | 会话设置
+    // | 是否显示顶部模块菜单，对于功能较少的可以选择不需要模块菜单进行分类, true为显示， false为不需要
     // +----------------------------------------------------------------------
-
-    'session'                => [
-        'id'             => '',
-        // SESSION_ID的提交变量,解决flash上传跨域
-        'var_session_id' => '',
-        // SESSION 前缀
-        'prefix'         => 'think',
-        // 驱动方式 支持redis memcache memcached
-        'type'           => '',
-        // 是否自动开启 SESSION
-        'auto_start'     => true,
-    ],
-
-    // +----------------------------------------------------------------------
-    // | Cookie设置
-    // +----------------------------------------------------------------------
-    'cookie'                 => [
-        // cookie 名称前缀
-        'prefix'    => '',
-        // cookie 保存时间
-        'expire'    => 0,
-        // cookie 保存路径
-        'path'      => '/',
-        // cookie 有效域名
-        'domain'    => '',
-        //  cookie 启用安全传输
-        'secure'    => false,
-        // httponly设置
-        'httponly'  => '',
-        // 是否使用 setcookie
-        'setcookie' => true,
-    ],
-
-    //分页配置
-    'paginate'               => [
-        'type'      => 'bootstrap',
-        'var_page'  => 'page',
-        'list_rows' => 15,
-    ],
+    'auth_module' => true,
 ];

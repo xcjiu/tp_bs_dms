@@ -28,13 +28,16 @@ class Login
 		if(!$user){
 			return '该账号不存在！';
 		}
+		if($user->status !== 1){
+			return '该账号被禁用，请联系管理员！';
+		}
 		if(password_verify($data['password'], $user->password)){
 			$user->is_login = 1; //保存登录状态
 			$user->token = self::getToken($user->username);
 			$user->save();
 			$user = $user->toArray();
 			unset($user['password']);
-			Session::set('user',$user);
+			Session::set('sysUser',$user);
 			if(!empty($data['remember'])){
 				Cookie::set('sys_user', $user); 
 			}
@@ -108,6 +111,17 @@ class Login
 	{
 		Cookie::clear();
 	}
-	
+
+	/*
+	 * 用户是否登录状态
+	 */
+	public static function isLogin()
+	{
+		$user = Session::get('sysUser');
+		if($user && User::where('id', $user['id'])->where('status','<>', 0)->find()){
+			return $user['id'];
+		}
+		return false;
+	}
 
 }

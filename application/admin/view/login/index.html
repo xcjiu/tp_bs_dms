@@ -45,6 +45,7 @@
                 </div> -->
               </div>
               <!--验证码-->
+              <{if $login_num>=3}>
               <div class="input-group input-group-lg mb-4 <{gt name='login_num' value=2}>hide<{gt}>" id="verify-img">
                 <input type="hidden" name="login_num" value="{$login_num}">
                 <div class="input-group-prepend">
@@ -54,6 +55,7 @@
                 </div>
                 <input type="text" id="captcha" class="form-control" name="captcha" placeholder="验证码">
               </div>
+              <{/if}>
               <button type="button" class="btn btn-block btn-lg btn-primary" id="submit-btn">登 录</button>
               <!--alert error msg-->
               <div class="alert alert-danger alert-dismissible show hide">
@@ -108,7 +110,6 @@
               remember: remember
             },
             function(data, status){
-              console.log(data);
               if(status=='success'){
                 if(data.code==0){ 
                   showMsg(data.msg); //输出错误信息
@@ -123,6 +124,13 @@
           });
         });
       });
+      //回车Enter提交
+      document.onkeydown = function (event) {
+        var e = event || window.event;
+        if (e && e.keyCode == 13) { //回车键的键值为13
+            $("#submit-btn").click(); //调用登录按钮的登录事件
+        }
+      };
     </script>
   </body>
 </html>

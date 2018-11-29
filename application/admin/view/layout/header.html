@@ -4,21 +4,21 @@
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarToggler">
+      <div class="collapse navbar-collapse bg-info pl-0" id="navbarToggler">
     	  <a class="text-center" href="" id="header-brand"><!-- <img src="__ADMIN__/images/logo.png" width="200" height="48" alt="Brand"> -->Brand</a>
-        <button class="btn btn-info menu-btn" data-toggle="tooltip" data-placement="bottom" title="收起菜单" onclick="menu_animate()"><i class="fa fa-align-justify"></i></button>
-        <ul class="navbar-nav mr-auto" id="module">
-          <li class="nav-item active nav-chose" onclick="module_click(this)">
-            <a class="nav-link text-white pt-0 pb-0 btn-lg" href="#">首页 <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item" onclick="module_click(this)">
-            <a class="nav-link text-white pt-0 pb-0 btn-lg" href="#">库存</a>
-          </li>
-          <li class="nav-item" onclick="module_click(this)">
-            <a class="nav-link text-white pt-0 pb-0 btn-lg" href="#">展厅</a>
-          </li>
-        </ul>
 
+        <!--顶部模块菜单加载-->
+        <ul class="navbar-nav mr-auto" id="module">
+        <{notempty name="topAuth"}>
+          <{foreach $topAuth as $module}>
+          <li class="nav-item <{if $module['title']=='首页'}>active nav-chose<{/if}>" onclick="module_click(this)">
+            <a class="nav-link text-white pt-0 pb-0 btn-lg" href="javascript:void(0)" ><{$module['title']}></a>
+          </li>
+          <{/foreach}>
+        <{/notempty}>
+        </ul>
+        
+        <!--用户详情、换肤、退出功能项-->
         <ul class="navbar-nav" id="module-action">
           <li class="nav-item pr-2">
             <a href="javacript:void(0)" class="nav-link pt-0 pb-0 btn text-white" id="user-info">
@@ -26,7 +26,7 @@
             </a>
           </li>
           <li class="nav-item pr-2"><a class="nav-link btn text-white" id="change-theme" href="#">换肤</a></li>
-          <li class="nav-item pr-2"><a class="nav-link btn text-white" href="#" id="logout">退出</a></li>
+          <li class="nav-item pr-2"><a class="nav-link btn text-white" href="<{:url('admin/login/logout')}>" id="logout">退出</a></li>
         </ul>
       </div>
   	</nav>
