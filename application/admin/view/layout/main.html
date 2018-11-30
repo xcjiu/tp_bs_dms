@@ -1,11 +1,13 @@
  <!--tabs bar absolute-->
- <nav class="bg-light p-0" id="tabs-bar" style="border-bottom: 1px solid #ddd;height: 40px;position:absolute;top:50px;left:200px;right:0px;">
+ <nav class="bg-light p-0" id="tabs-bar">
     <!--menu animate-->
     <button class="btn btn-info menu-btn pull-left border" data-toggle="tooltip" data-placement="bottom" title="收起菜单" onclick="menu_animate(this)"><i class="fa fa-align-justify"></i></button>
 
-    <a class="btn pull-left" id="tab-backward" title="左侧隐藏标签" href="javascript:void(0)" onclick="animate_tabs('backward')" style="border-right:1px solid #ccc;"><i class="fa fa-backward"></i></a>
-    <div class="nav-tab-box h-100" style="overflow: hidden;position: relative;margin-right:78px;white-space: nowrap;width:auto;">
-      <ul class="nav nav-tabs pull-left h-100" id="main-tab" style="width:3000px;border-bottom: 0;position: relative;display:block;overflow: hidden;">
+    <a class="btn pull-left" id="tab-backward" title="左侧隐藏标签" href="javascript:void(0)" onclick="animate_tabs('backward')">
+      <i class="fa fa-backward"></i>
+    </a>
+    <div class="nav-tab-box h-100">
+      <ul class="nav nav-tabs pull-left h-100" id="main-tab">
         <li class="nav-item active" id="home-tab">
         <a class="nav-link p-6 active pull-left" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
           首页
@@ -14,8 +16,10 @@
       </ul>
     </div>
     
-    <a class="btn dropdown-toggle pull-right" href="#" id="navtabsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-top:-40px;"></a>
-    <a class="btn pull-right" id="tab-forward" title="右侧隐藏标签" href="javascript:void(0)" onclick="animate_tabs('forward')"  style="margin-top:-40px;margin-right:36px;"><i class="fa fa-forward"></i></a>
+    <a class="btn dropdown-toggle pull-right" href="#" id="navtabsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+    <a class="btn pull-right" id="tab-forward" title="右侧隐藏标签" href="javascript:void(0)" onclick="animate_tabs('forward')">
+      <i class="fa fa-forward"></i>
+    </a>
     <div class="dropdown-menu" aria-labelledby="navtabsDropdown">
       <button class="dropdown-item btn text-primary" onclick="close_tabs()">关闭所有</button>
       <div class="dropdown-divider"></div>
