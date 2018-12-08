@@ -154,6 +154,33 @@
   color:red;
 }
 
+/*数据表格样式自定义*/
+/*.table > thead {
+  font-size:18px;
+}
+ .table-striped tbody tr:nth-of-type(even) {
+  background-color:#e2f2ff;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #d8efd9;
+} */
+.table-striped tbody tr:hover {
+ background-color:#e2f2ff;
+}
+.table-list-title {
+  padding:5px;
+}
+.table-list-title::before {
+  content: '';
+  border: 3px solid #17a2b8;
+}
+.fixed-table-container tbody td .th-inner, .fixed-table-container thead th .th-inner {
+  padding:4px;
+}
+.bootstrap-table .table:not(.table-condensed)>tbody>tr>td {
+  padding:4px;
+}
+
 /*footer*/
 #footer {
   height: 30px;

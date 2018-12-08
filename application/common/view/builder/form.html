@@ -1,0 +1,56 @@
+<!--form-->
+<form method="<{$method}>" <{$files?='enctype="multipart/form-data"'}> style="font-size: 18px;">
+  <{foreach $inputs as $input}>
+  <div class="form-group">
+    <label class="text-primary pl-1"><{$input.title}></label>
+    <input type="text" class="form-control" name="<{input.name}>" placeholder="<{$input.placeholder}>" <{$input.required?='required'}>>
+  </div>
+  <{/foreach}>
+
+  <{foreach $radios as $radio}>
+  <div class="form-group">
+    <label class="text-primary pl-1"><{$radio.title}>：</label>
+    <{foreach $radio['options'] as $option}>
+    <div class="form-check form-check-inline">
+      <label class="form-check-label">
+        <input class="form-check-input" type="radio" name="<{$radio.name}>" value="<{$option.value}>" <{$option.checked?='checked'}>><{$option.text}>
+      </label>
+    </div>
+    <{/foreach}>
+  <{/foreach}>
+
+  <{foreach $checkboxs as $checkbox}>
+  <div class="form-group">
+    <label class="text-primary pl-1"><{$checkbox.title}>：</label>
+    <{foreach $checkbox['options'] as $option}>
+    <div class="form-check">
+      <label class="form-check-label">
+      <input class="form-check-input" type="checkbox" value="<{$option.value}>" name="<{$checkbox.name}>" <{$option?='checked'}>><{$option.text}>
+      </label>
+    </div>
+    <{/foreach}>
+  </div>
+  </div>
+  <{/foreach}>
+
+  <{foreach $selects as $select}>
+  <div class="form-group">
+    <label class="text-primary pl-1"><{$select.title}></label>
+    <select class="form-control" name="<{$select.name}>">
+      <option value="null"><{$select.placeholder}></option>
+      <{foreach $select['options'] as $option}>
+      <option value="<{$option.value}>" <{$option.selected?='selected'}>><{$option.text}></option>
+      <{/foreach}>
+    </select>
+  </div>
+  <{/foreach}>
+
+  <{foreach $files as $file}>
+  <div class="form-group">
+    <label class="text-primary pl-1"><{$tile.title}></label>
+    <input type="file" class="form-control-file" name="<{$file.name}>" <{$file.required?='required'}>>
+  </div>
+  <{/foreach}>
+
+  <button type="btn" class="btn btn-primary btn-lg btn-block">提 交</button>
+</form>

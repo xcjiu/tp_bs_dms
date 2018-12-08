@@ -15,9 +15,8 @@ class Base extends Controller
 	public function _initialize()
 	{
     $this->checkController(); //检查控制器是否存在，优化URL
-
-    $this->uid = Login::isLogin();
-		if($this->uid === false){ 
+    $this->uid = (int)Login::isLogin();
+		if(!$this->uid){ 
       $this->redirect('admin/login/index');
     }
 

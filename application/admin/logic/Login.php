@@ -39,7 +39,7 @@ class Login
 			unset($user['password']);
 			Session::set('sysUser',$user);
 			if(!empty($data['remember'])){
-				Cookie::set('sys_user', $user); 
+				Cookie::set('sys_user', $user, 3600*24*7); //保存一周时间
 			}
 			return true;
 		}else{
@@ -117,11 +117,18 @@ class Login
 	 */
 	public static function isLogin()
 	{
-		$user = Session::get('sysUser');
-		if($user && User::where('id', $user['id'])->where('status','<>', 0)->find()){
-			return $user['id'];
+		$cookieUser = Cookie::get('sys_user');
+		if($cookieUser){ //是否记住登入
+			$user = User::where('id', $cookieUser['id'])->where('status','<>', 0)->find();
+			if($user && $user['token']===$cookieUser['token']){
+				return $user->id;
+			}
+		}else{
+			$user = Session::get('sysUser');
+			if($user && User::where('id', $user['id'])->where('status','<>', 0)->find()){
+				return $user['id'];
+			}
 		}
 		return false;
 	}
-
 }

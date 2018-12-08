@@ -1,15 +1,15 @@
-/*----------------------------定义一些公用变量------------------------------*/
-var root_domain = "http://localhost/Tp5/admin/tp_bs_dms/public/",
-    current_user_info = ''; 
 
 
 /*----------------------header导航栏相关处理-------------------------*/
 //顶部导航菜单选择
-$('#module > li.nav-item').hover(function(){
+$(function(){
+  $('#module > li.nav-item').hover(function(){
     $(this).addClass('active');
-},function(){
-  if(!$(this).hasClass('nav-chose')){$(this).removeClass('active');}
-});
+  },function(){
+    if(!$(this).hasClass('nav-chose')){$(this).removeClass('active');}
+  });
+})
+
 
 //顶部导航菜单点击
 function module_click(e){
@@ -33,6 +33,8 @@ function menu_animate(e){
     $(e).attr('title','收起菜单');
   }
 }
+
+$(function(){
 
 //用户详情，换肤，退出等功能操作项
 $('#module-action > li.nav-item').hover(function(){
@@ -96,6 +98,8 @@ $('#change-theme-card').hover(function(){
 $('#change-theme-card').find('button').hover(function(){
   $(this).toggleClass('shadow');
 });
+
+})
 //换肤
 function themeColor(newThemeInt=1){
   var oldThemeInt = $('#header').attr('bg-theme-int');
@@ -159,7 +163,7 @@ function open_page(url, el){
     currentTab.parent('li').siblings().children('a').removeClass('active show');
   }else{
     $.ajax({
-      url:root_domain + url,
+      url:domain + url,
       data: {}, 
       success: function(data, status, xhr){ //ajax异步请求内容页面
         if(status==='success'){
@@ -189,6 +193,8 @@ function open_page(url, el){
   }
 }
 
+$(function(){
+
 //菜单焦点样式
 $('#left-menu').find('li.nav-item').hover(function(){
     $(this).addClass('active');
@@ -213,11 +219,13 @@ $('#left-menu').find('li.nav-item').click(function(event){
       icon = 'fa-chevron-right';
     }
     dropdownIcon.html('<i class="fa '+icon+' pull-right pt-1"></i>');
-    ul_item.slideToggle('slow');
+    ul_item.slideToggle('fast');
   }
-  $(this).siblings().children('ul').slideUp('slow');
+  $(this).siblings().children('ul').slideUp('fast');
   event.stopPropagation(); //阻止冒泡事件
 });
+
+})
 /*---------------------end-侧边菜单栏相关处理---------------------------*/
 
 
@@ -260,10 +268,6 @@ function main_tab_animate(type=''){
   }
 }
 
-//窗口发生变化时标签盒子动态变化
-$(window).resize(function(){ 
-  main_tab_animate('resize');
-});
 
 //标签按钮点击
 function animate_tabs(type)
@@ -306,11 +310,40 @@ function stay_current_tab(){
 
 
 /*----------------------footer---------------------------*/
-//提示说明
-$('#footer > button').tooltip();
+$(function(){
+
 //关闭底部栏
 $('#footer > button').click(function(){
   $('#footer').remove();
   $('#left-menu').css('height','calc(100% - 50px)');
   $('#main').css('height','calc(100% - 90px)');
+$('#footer > button').tooltip('close');
 });
+
+//窗口发生变化时标签盒子动态变化
+$(window).resize(function(){ 
+  main_tab_animate('resize');
+});
+
+})
+
+//信息提示框，msg信息内容，timeout自动消失时间，默认3秒
+function Alert(msg, bgcolor='alert-danger', timeout=3000)
+{
+  var alertBox = $('#alert');
+  alertBox.children('span').html(msg);
+  alertBox.addClass('show ' + bgcolor);
+  setTimeout("$('.alert').removeClass('show')", timeout);
+}
+
+//模态内容加载器
+function actionModal(url)
+{
+  url = domain + url;
+  $.get(url, function(data, status, xhr){
+    $('#action-modal').find('.modal-body').html(data);
+  });
+}
+
+
+

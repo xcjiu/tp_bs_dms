@@ -46,7 +46,9 @@ return [
     'view_replace_str'       => [
         '__BOOTSTRAP__' => \think\Request::instance()->root(true) . '/static/bootstrap',
         '__ADMIN__' =>  \think\Request::instance()->root(true) . '/static/admin',
-        '__FONTAWESOME__' => \think\Request::instance()->root(true) . '/static/fontAwesome'
+        '__FONTAWESOME__' => \think\Request::instance()->root(true) . '/static/fontAwesome',
+        '__BOOTSTRAP-TABLE__' => \think\Request::instance()->root(true) . '/static/bootstrap-table',
+        '__DATEPICKER__' => \think\Request::instance()->root(true) . '/static/datepicker'
     ],
     
     // +----------------------------------------------------------------------

@@ -21,6 +21,7 @@ class Index extends Base
 
     //权限变量输出
     $this->assign($auths); 
+    $this->assign('domain', $this->request->root(true) . "/");//获取当前包含域名的ROOT地址
 
 		return $this->fetch();
 	}
@@ -39,7 +40,7 @@ class Index extends Base
 
 
 /**
- * 侧边栏菜单树
+ * 侧边栏菜单树,递归
  */
 function menu_tree($data, $pid=0, $pids=[]){
   $html = '';
