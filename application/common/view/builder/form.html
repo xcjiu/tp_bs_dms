@@ -1,19 +1,19 @@
 <!--form-->
-<form method="<{$method}>" <{$files?='enctype="multipart/form-data"'}> style="font-size: 18px;">
+<form <{$files?='enctype="multipart/form-data"'}> id="builder-form" style="font-size: 18px;">
   <{foreach $inputs as $input}>
   <div class="form-group">
     <label class="text-primary pl-1"><{$input.title}></label>
-    <input type="text" class="form-control" name="<{input.name}>" placeholder="<{$input.placeholder}>" <{$input.required?='required'}>>
+    <input type="<{$input.type}>" class="form-control" name="<{$input.name}>" placeholder="<{$input.placeholder}>" value="<{$input.default}>" <{$input.required?='required'}>>
   </div>
   <{/foreach}>
 
   <{foreach $radios as $radio}>
   <div class="form-group">
     <label class="text-primary pl-1"><{$radio.title}>：</label>
-    <{foreach $radio['options'] as $option}>
+    <{foreach $radio['options'] as $value => $text}>
     <div class="form-check form-check-inline">
       <label class="form-check-label">
-        <input class="form-check-input" type="radio" name="<{$radio.name}>" value="<{$option.value}>" <{$option.checked?='checked'}>><{$option.text}>
+        <input class="form-check-input" type="radio" name="<{$radio.name}>" value="<{$value}>" <{$radio.default==$value?='checked'}>><{$text}>
       </label>
     </div>
     <{/foreach}>
@@ -22,10 +22,10 @@
   <{foreach $checkboxs as $checkbox}>
   <div class="form-group">
     <label class="text-primary pl-1"><{$checkbox.title}>：</label>
-    <{foreach $checkbox['options'] as $option}>
+    <{foreach $checkbox['options'] as $value => $text}>
     <div class="form-check">
       <label class="form-check-label">
-      <input class="form-check-input" type="checkbox" value="<{$option.value}>" name="<{$checkbox.name}>" <{$option?='checked'}>><{$option.text}>
+      <input class="form-check-input" type="checkbox" value="<{$value}>" name="<{$checkbox.name}>" <{$checkbox.default==$value?='checked'}>><{$text}>
       </label>
     </div>
     <{/foreach}>
@@ -37,9 +37,9 @@
   <div class="form-group">
     <label class="text-primary pl-1"><{$select.title}></label>
     <select class="form-control" name="<{$select.name}>">
-      <option value="null"><{$select.placeholder}></option>
-      <{foreach $select['options'] as $option}>
-      <option value="<{$option.value}>" <{$option.selected?='selected'}>><{$option.text}></option>
+      <option value=""><{$select.placeholder}></option>
+      <{foreach $select['options'] as $value => $text}>
+      <option value="<{$value}>" <{$select.default==$value?='selected'}>><{$text}></option>
       <{/foreach}>
     </select>
   </div>
@@ -47,10 +47,43 @@
 
   <{foreach $files as $file}>
   <div class="form-group">
-    <label class="text-primary pl-1"><{$tile.title}></label>
+    <label class="text-primary pl-1"><{$file.title}></label>
     <input type="file" class="form-control-file" name="<{$file.name}>" <{$file.required?='required'}>>
   </div>
   <{/foreach}>
 
-  <button type="btn" class="btn btn-primary btn-lg btn-block">提 交</button>
+  <{foreach $textareas as $textarea}>
+  <div class="form-group">
+    <label class="text-primary pl-1"><{$textarea.title}></label>
+    <textarea type="file" class="form-control-file" name="<{$textarea.name}>" <{$textarea.required?='required'}>></textarea>
+  </div>
+  <{/foreach}>
+
+  <button type="submit" class="btn btn-primary btn-lg btn-block">提 交</button>
 </form>
+
+<script>
+var method = "<{$method}>";
+var url = domain + "<{$submitUrl}>";
+$("#builder-form").submit(function(event){
+  event.preventDefault(); //阻止表单提交
+  var data = method=="GET" ? $("#builder-form").serialize() : $("#builder-form").serializeArray();
+  $.ajax({
+    url: url,
+    type: method,
+    data: data,
+    success: function(result,status,xhr){
+      console.log(data);
+      if(result.code == 1){ 
+        $('#action-modal').modal('hide');
+        Alert(result.msg, 'alert-success');
+        $('#data-table').bootstrapTable('refresh');
+      }else{
+        $('#action-modal').modal('hide');
+        Alert(result.msg, 'alert-danger');
+        return false;
+      }
+    }
+  });
+});
+</script>

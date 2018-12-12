@@ -12,7 +12,7 @@ class Login extends Controller
 	 * 登录页面
 	 * 
 	 */
-	public function index()
+	public function index($top='')
 	{	
 		$loginNum = LoginLogic::getLoginNum(); //登录失败次数,从0开始记
 		$this->assign('login_num', $loginNum);
@@ -29,6 +29,10 @@ class Login extends Controller
 				$this->error($loginResult,'',$loginNum);
 			}
 		}
+    if($top){ //最外层跳转，当退出登入或session过期时防止登入页面出现在小框架内部
+      $top = $this->request->root() . '/admin/login/index';
+    }
+    $this->assign('topLogin', $top);
 		return $this->fetch();
 	}
 
@@ -39,7 +43,7 @@ class Login extends Controller
     public function logout(){
         LoginLogic::clearSession();
         LoginLogic::clearCookie();
-        $this->redirect('admin/login/index');
+        $this->redirect('admin/login/index?top=true');
     }
 
   

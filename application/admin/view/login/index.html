@@ -71,6 +71,11 @@
     <script src="__BOOTSTRAP__/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
     <script src="__BOOTSTRAP__/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script>
+    var topLogin = "<{$topLogin}>";
+    if(topLogin != ''){
+      top.location.href = topLogin;
+    }
+    
       //验证码刷新
       function changeVerify(e){ 
         e.src = "<{:captcha_src()}>?id=" + Math.random();
@@ -131,6 +136,8 @@
             $("#submit-btn").click(); //调用登录按钮的登录事件
         }
       };
+
+
     </script>
   </body>
 </html>

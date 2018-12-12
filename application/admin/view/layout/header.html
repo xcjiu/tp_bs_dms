@@ -26,6 +26,7 @@
             </a>
           </li>
           <li class="nav-item pr-2"><a class="nav-link btn text-white" id="change-theme" href="#">换肤</a></li>
+          <li class="nav-item pr-2"><a class="nav-link btn text-white" id="more-action" href="#">更多</a></li>
           <li class="nav-item pr-2"><a class="nav-link btn text-white" href="<{:url('admin/login/logout')}>" id="logout">退出</a></li>
         </ul>
       </div>
@@ -49,7 +50,7 @@
     <!--change theme card-->
     <div class="card bg-wihte text-center shadow hide" id="change-theme-card">
       <ul class="list-group list-group-flush">
-        <li class="list-group-item p-0"><button class="btn bg-theme1-top text-white w-100">风格一</button></li>
+        <li class="list-group-item p-0"><button class="btn bg-theme1-top text-white w-100" style="border-bottom: 1px solid #ddd;">风格一</button></li>
         <li class="list-group-item p-0"><button class="btn bg-theme2-top text-white w-100">风格二</button></li>
         <li class="list-group-item p-0"><button class="btn bg-theme3-top text-white w-100">风格三</button></li>
         <li class="list-group-item p-0"><button class="btn bg-theme4-top text-white w-100">风格四</button></li>
@@ -57,4 +58,15 @@
         <li class="list-group-item p-0"><button class="btn bg-theme6-top text-white w-100">风格六</button></li>
       </ul>
     </div>
+
+    <!--more 更多操作放这里下拉-->
+    <div class="card bg-wihte text-center shadow hide" id="more-action-card">
+      <ul class="list-group list-group-flush">          
+        <li class="list-group-item p-0"><button class="btn text-white w-100 bg-info" id="clear-chache" style="border-bottom: 1px solid #ddd;">清缓存</button></li>
+        <li class="list-group-item p-0"><button class="btn text-white w-100 bg-info" id="full-screen">全屏</button></li>
+        <li class="list-group-item p-0"><button class="btn text-white w-100 bg-info" id="lock-screen">锁屏</button></li>
+      </ul>
+    </div>
   </div>
+
+  

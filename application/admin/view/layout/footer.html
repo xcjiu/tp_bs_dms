@@ -3,8 +3,9 @@ Copyright © 2017-2018 tp_bs_dms. 保留所有权利。
 <button class="btn btn-primary pull-right">&times;</button>
 </div>
 
+<!--以下标签为固定结构，不要随意更改-->
 <!--alert msg 信息提示框-->
-<div class="alert alert-warning alert-dismissible fade shadow" id="alert" role="alert" style="width:800px;margin:0 auto;margin-top: 12%;">
+<div class="alert alert-dismissible text-center fade shadow hide" id="alert" role="alert">
   <span>message</span>
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
@@ -13,10 +14,10 @@ Copyright © 2017-2018 tp_bs_dms. 保留所有权利。
 
 <!-- Modal 模态框-->
 <div class="modal fade" id="action-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title text-info" id="exampleModalLabel">新增用户</h5>
+        <h5 class="modal-title text-info" id="exampleModalLabel">Title</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">关闭</span>
         </button>
@@ -28,3 +29,12 @@ Copyright © 2017-2018 tp_bs_dms. 保留所有权利。
   </div>
 </div>
 
+<!--lock screen 锁屏罩-->
+<div class="<{$lockScreen}>" id="lock-screen-page">
+  <div class="card text-center shadow">
+      <div class="card-body row">
+        <input class="form-control col-8" type="text" name="lock-password" placeholder="请输入密码" autofocus="autofocus">
+        <button class="btn btn-sm btn-info col-4" onclick="unlockscreen(this)">解 屏</button>
+      </div>
+    </div>
+</div>

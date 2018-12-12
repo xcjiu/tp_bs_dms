@@ -1,16 +1,6 @@
 
 
 /*----------------------header导航栏相关处理-------------------------*/
-//顶部导航菜单选择
-$(function(){
-  $('#module > li.nav-item').hover(function(){
-    $(this).addClass('active');
-  },function(){
-    if(!$(this).hasClass('nav-chose')){$(this).removeClass('active');}
-  });
-})
-
-
 //顶部导航菜单点击
 function module_click(e){
   $(e).addClass('active nav-chose');
@@ -35,162 +25,262 @@ function menu_animate(e){
 }
 
 $(function(){
+  open_main_content('admin/index/home');//加载首页，登入成功后
+  //顶部导航菜单选择
+  $('#module > li.nav-item').hover(function(){
+    $(this).addClass('active');
+  },function(){
+    if(!$(this).hasClass('nav-chose')){$(this).removeClass('active');}
+  });
 
-//用户详情，换肤，退出等功能操作项
-$('#module-action > li.nav-item').hover(function(){
-    $(this).addClass('shadow');
-},function(){
-    $(this).removeClass('shadow');
-});
-$('#module-action > li.nav-item').click(function(){
-    $(this).removeClass('shadow');
-});
+  //用户详情，换肤，退出等功能操作项
+  $('#module-action > li.nav-item').hover(function(){
+      $(this).addClass('shadow bg-info');
+  },function(){
+      $(this).removeClass('shadow bg-info');
+  });
+  $('#module-action > li.nav-item').click(function(){
+      $(this).removeClass('shadow');
+  });
 
-//用户详情卡
-$('#user-info').hover(function(){
-  var userCard = $('#user-info-card');
-  if(userCard.hasClass('hide')){
-    var position = $(this).offset();
-    var left = (position.left + $(this).innerWidth() - userCard.innerWidth()) + 'px';
-    var top = (position.top + $(this).height()) + 'px';
-    userCard.siblings().addClass('hide').removeClass('card-chose');
-    userCard.css({'left': left, 'top': top}); //根据坐标自动对齐位置
-    userCard.removeClass('hide');
+  //用户详情卡
+  $('#user-info').hover(function(){
+    var userCard = $('#user-info-card');
+    if(userCard.hasClass('hide')){
+      var position = $(this).offset();
+      var left = (position.left + $(this).innerWidth() - userCard.innerWidth()) + 'px';
+      var top = (position.top + $(this).height()) + 'px';
+      userCard.siblings().addClass('hide').removeClass('card-chose');
+      userCard.css({'left': left, 'top': top}); //根据坐标自动对齐位置
+      userCard.removeClass('hide');
+    }
+  }, function(){
+    setTimeout("\
+      if(!$('#user-info-card').hasClass('card-chose')){\
+        $('#user-info-card').addClass('hide');\
+      }\
+    ", 500);
+  });
+  $('#user-info-card').hover(function(){
+    $(this).addClass('card-chose');
+  }, function(){
+    $(this).addClass('hide').removeClass('card-chose');
+  });
+
+  //换肤选项卡
+  $('#change-theme').hover(function(){
+    var changeCard = $('#change-theme-card');
+    if(changeCard.hasClass('hide')){
+      var position = $(this).offset();
+      var left = (position.left + $(this).innerWidth() - changeCard.innerWidth()) + 'px';
+      var top = (position.top + $(this).outerHeight(true)) + 'px';
+      changeCard.siblings().addClass('hide').removeClass('card-chose');
+      changeCard.css({'left': left, 'top': top}); //根据坐标自动对齐位置
+      changeCard.removeClass('hide')
+    }
+  }, function(){
+    setTimeout("\
+      if(!$('#change-theme-card').hasClass('card-chose')){\
+        $('#change-theme-card').addClass('hide');\
+      }\
+    ", 500);
+  });
+  $('#change-theme-card').hover(function(){
+    $(this).addClass('card-chose');
+  }, function(){
+    $(this).addClass('hide').removeClass('card-chose');
+  });
+
+  //换肤卡焦点
+  $('#change-theme-card').find('button').hover(function(){
+    $(this).toggleClass('shadow');
+  });
+
+  //换肤
+  function themeColor(newThemeInt=1){
+    var oldThemeInt = $('#header').attr('bg-theme-int');
+    var old_bg_top_bottom = 'bg-theme' + oldThemeInt +'-top';
+    var old_bg_left_menu = 'bg-theme' + oldThemeInt +'-menu';
+    var new_bg_top_bottom = 'bg-theme' + newThemeInt +'-top';
+    var new_bg_left_menu = 'bg-theme' + newThemeInt +'-menu';
+    $('#header').attr('bg-theme-int', newThemeInt);
+    $('#header').removeClass(old_bg_top_bottom).addClass(new_bg_top_bottom);
+    $('#navbarToggler').removeClass(old_bg_top_bottom).addClass(new_bg_top_bottom);
+    $('#footer').removeClass(old_bg_top_bottom).addClass(new_bg_top_bottom);
+    $('#left-menu').removeClass(old_bg_left_menu).addClass(new_bg_left_menu);
   }
-}, function(){
-  setTimeout("\
-    if(!$('#user-info-card').hasClass('card-chose')){\
-      $('#user-info-card').addClass('hide');\
-    }\
-  ", 500);
-});
-$('#user-info-card').hover(function(){
-  $(this).addClass('card-chose');
-}, function(){
-  $(this).addClass('hide').removeClass('card-chose');
+  $('#change-theme-card').find('button').click(function(){
+    var theme = $(this).text();
+    switch(theme){
+      case '风格一':
+        themeColor(1);
+        break;
+      case '风格二':
+        themeColor(2);
+        break;
+      case '风格三':
+        themeColor(3);
+        break;
+      case '风格四':
+        themeColor(4);
+        break;
+      case '风格五':
+        themeColor(5);
+        break;
+      case '风格六':
+        themeColor(6);
+        break;
+    }
+  });
+
+  //更多操作项
+  $('#more-action').hover(function(){
+    var moreActionCard = $('#more-action-card');
+    if(moreActionCard.hasClass('hide')){
+      var position = $(this).offset();
+      var left = (position.left + $(this).innerWidth() - moreActionCard.innerWidth()) + 'px';
+      var top = (position.top + $(this).outerHeight(true)) + 'px';
+      moreActionCard.siblings().addClass('hide').removeClass('card-chose');
+      moreActionCard.css({'left': left, 'top': top}); //根据坐标自动对齐位置
+      moreActionCard.removeClass('hide');
+    }
+  }, function(){
+    setTimeout("\
+      if(!$('#more-action-card').hasClass('card-chose')){\
+        $('#more-action-card').addClass('hide');\
+      }\
+    ", 500);
+  });
+  $('#more-action-card').hover(function(){
+    $(this).addClass('card-chose');
+  }, function(){
+    $(this).addClass('hide').removeClass('card-chose');
+  });
+  //更多操作焦点
+  $('#more-action-card').find('button').hover(function(){
+    $(this).toggleClass('shadow');
+  });
+
+  //清缓存
+  $('#clear-chache').click(function(){
+    window.location.reload(); //强制刷新
+  });
+
+  //全屏
+  $('#full-screen').click(function(){
+    var docElm = document.documentElement;
+    //W3C
+    if (docElm.requestFullscreen) {
+      docElm.requestFullscreen();
+    }
+    //FireFox
+    else if (docElm.mozRequestFullScreen) {
+      docElm.mozRequestFullScreen();
+    }
+    //Chrome等
+    else if (docElm.webkitRequestFullScreen) {
+      docElm.webkitRequestFullScreen();
+    }
+    //IE11
+    else if (docElm.msRequestFullscreen) {
+      docElm.msRequestFullscreen();
+    }
+  });
+
+  //锁屏操作
+  $('#lock-screen').click(function(){
+    //var lockHtml = '锁屏密码：<input type="text" class="form-control" autofocus="autofocus"><br><button class="btn btn-info btn-block lock-screen-btn">确 定</button>';
+    var lockHtml = '<div class="input-group mb-3">\
+      <input type="text" class="form-control" placeholder="锁屏密码" aria-label="" aria-describedby="basic-addon2" required>\
+      <div class="input-group-append">\
+        <button class="btn btn-info" type="button" onclick="lockscreen(this)">锁 屏</button>\
+      </div>\
+    </div>';
+    $('#action-modal .modal-title').html('锁屏操作');
+    $('#action-modal .modal-dialog').removeClass('modal-lg').addClass('modal-sm');
+    $('#action-modal').find('.modal-body').html(lockHtml);
+    $('#action-modal').modal('show');
+  });
 });
 
-//换肤选项卡
-$('#change-theme').hover(function(){
-  var changeCard = $('#change-theme-card');
-  if(changeCard.hasClass('hide')){
-    var position = $(this).offset();
-    var left = (position.left + $(this).innerWidth() - changeCard.innerWidth()) + 'px';
-    var top = (position.top + $(this).outerHeight(true)) + 'px';
-    changeCard.siblings().addClass('hide').removeClass('card-chose');
-    changeCard.css({'left': left, 'top': top}); //根据坐标自动对齐位置
-    changeCard.removeClass('hide')
+//锁屏事件
+function lockscreen(e){
+  var alertBg = 'alert-danger';
+  var psd = $(e).parent().prev().val();
+  if(psd == ''){
+    Alert('请输入密码！', alertBg);
+    return false;
   }
-}, function(){
-  setTimeout("\
-    if(!$('#change-theme-card').hasClass('card-chose')){\
-      $('#change-theme-card').addClass('hide');\
-    }\
-  ", 500);
-});
-$('#change-theme-card').hover(function(){
-  $(this).addClass('card-chose');
-}, function(){
-  $(this).addClass('hide').removeClass('card-chose');
-});
-
-//换肤卡焦点
-$('#change-theme-card').find('button').hover(function(){
-  $(this).toggleClass('shadow');
-});
-
-})
-//换肤
-function themeColor(newThemeInt=1){
-  var oldThemeInt = $('#header').attr('bg-theme-int');
-  var old_bg_top_bottom = 'bg-theme' + oldThemeInt +'-top';
-  var old_bg_left_menu = 'bg-theme' + oldThemeInt +'-menu';
-  var new_bg_top_bottom = 'bg-theme' + newThemeInt +'-top';
-  var new_bg_left_menu = 'bg-theme' + newThemeInt +'-menu';
-  $('#header').attr('bg-theme-int', newThemeInt);
-  $('#header').removeClass(old_bg_top_bottom).addClass(new_bg_top_bottom);
-  $('#navbarToggler').removeClass(old_bg_top_bottom).addClass(new_bg_top_bottom);
-  $('#footer').removeClass(old_bg_top_bottom).addClass(new_bg_top_bottom);
-  $('#left-menu').removeClass(old_bg_left_menu).addClass(new_bg_left_menu);
+  $.post(domain + 'admin/index/lockscreen', {type:'lock', psd: psd}, function(data, status){
+    if(data.code == 1){
+      $('#action-modal').modal('hide');
+      $('#lock-screen-page').removeClass('hide');
+      alertBg = 'alert-success';
+    }
+    Alert(data.msg, alertBg);
+  });
 }
-$('#change-theme-card').find('button').click(function(){
-  var theme = $(this).text();
-  switch(theme){
-    case '风格一':
-      themeColor(1);
-      break;
-    case '风格二':
-      themeColor(2);
-      break;
-    case '风格三':
-      themeColor(3);
-      break;
-    case '风格四':
-      themeColor(4);
-      break;
-    case '风格五':
-      themeColor(5);
-      break;
-    case '风格六':
-      themeColor(6);
-      break;
+//解屏事件
+function unlockscreen(e){
+  var alertBg = 'alert-danger';
+  var psd = $(e).prev().val();
+  if(psd == ''){
+    Alert('请输入密码！', alertBg);
+    return false;
   }
-});
+  $.post(domain + 'admin/index/lockscreen', {type: 'unlock', psd: psd}, function(data, status){
+    if(data.code == 1){
+      $('#lock-screen-page').addClass('hide');
+      alertBg = 'alert-success';
+    }      
+    Alert(data.msg, alertBg);
+  });
+}
+
 /*---------------------end-header导航栏相关处理-------------------------*/
 
 
 /*----------------------侧边菜单栏相关处理------------------------------*/
 //打开对应的菜单页面
 function open_page(url, el){
-  var attrId = $(el).attr('content-id');
-  var id = $("#" + attrId);
+  topLogin(url);
   if($(el).children('span').children('i.pull-right').length>0){ //父级菜单下拉项不请求信息
     return false;
   }
-  if(id && id.length>0){ //已存在此内容标签
-    var currentTab = $('a[href="#'+attrId+'"]');
-    var currentLeftWidth = currentTab.offset().left - $('#tab-backward').offset().left;
-    var currentRightWidth = $('#tab-forward').offset().left - currentTab.offset().left;
-    if(currentLeftWidth < 0){ //当再次点击的菜单标签已被左隐藏时，让其显示为可见的位置
-      $('#main-tab').animate({'left': '+=' + (Math.abs(currentLeftWidth) + 150) + 'px'}, 'fast');
-    }
-    if(currentRightWidth < currentTab.innerWidth()){ //当再次点击的菜单标签已右隐藏时，让其显示为可见的位置
-      $('#main-tab').animate({'left': '-=' + (Math.abs(currentRightWidth) + 188) + 'px'}, 'fast');
-    }
-    id.addClass('active show');
-    id.siblings().removeClass('active show');
-    currentTab.addClass('active show');
-    currentTab.parent('li').siblings().children('a').removeClass('active show');
+  var title = $(el).html();
+  var openTab = $('#main-tab').find('[open-url="'+url+'"]');
+  if(openTab.length > 0){ //标签已存在  
+    $('#main-tab').find('a').removeClass('active show');
+    openTab.addClass('active show');
   }else{
-    $.ajax({
-      url:domain + url,
-      data: {}, 
-      success: function(data, status, xhr){ //ajax异步请求内容页面
-        if(status==='success'){
-          var title = $(el).html();
-          var html = '<div class="tab-pane fade active show" id="'+attrId+'" role="tabpanel" aria-labelledby="contact-tab">'+data+'</div>';
-          var liTitle = '<li class="nav-item"><a class="nav-link p-6 pull-left active show" data-toggle="tab" href="#'+attrId+'" role="tab" aria-controls="'+attrId+'" aria-selected="false">' + title + '<i class="fa fa-times" onclick="close_current_tab(this)"></i></a></li>';
-          $('#main-tab').find('a').removeClass('active show');
-          $('#main-content').children('div').removeClass('active show');
-          $('#main-content').append(html);
-          $('#main-tab').append(liTitle);
-          main_tab_animate('open_page'); //主页面标签导航盒子动态宽度变化
-        }
-      },
-      error: function(xhr, status, error){
-        //alert(status + " " + xhr.status + ' ' + error); //弹出错误信息
-        var errorMsg = '<h1 style="color:red;padding:25px;">' + status + ": " + xhr.status + ' ' + error + '</h1>';
-        var title = $(el).html();
-        var html = '<div class="tab-pane fade active show" id="'+attrId+'" role="tabpanel" aria-labelledby="contact-tab">'+errorMsg+'</div>';
-        var liTitle = '<li class="nav-item"><a class="nav-link p-6 pull-left active show" data-toggle="tab" href="#'+attrId+'" role="tab" aria-controls="'+attrId+'" aria-selected="false">' + title + '<i class="fa fa-times" onclick="close_current_tab(this)"></i></a></li>';
-        $('#main-tab').find('a').removeClass('active show');
-        $('#main-content').children('div').removeClass('active show');
-        $('#main-content').append(html);
-        $('#main-tab').append(liTitle);
-        main_tab_animate('open_page'); //主页面标签导航盒子动态宽度变化
-      }
-    });
+    var liTitle = '<li class="nav-item"><a class="nav-link p-6 pull-left content-tab-click active show"\
+     data-toggle="tab" href="javascript:void(0);" role="tab" aria-selected="false" open-url="' + url + '">\
+     ' + title + '<i class="fa fa-times close-current-tab"></i></a></li>';
+    $('#main-tab').find('a').removeClass('active show');
+    $('#main-tab').append(liTitle);
+    main_tab_animate('open_page'); //主页面标签导航盒子动态宽度变化
   }
+  open_main_content(url); //加载内容区页面
+}
+
+//加载内容区页面
+function open_main_content(url)
+{
+  $.ajax({
+    url:domain + url,
+    data: {}, 
+    success: function(data, status, xhr){ //ajax异步请求内容页面
+      if(status==='success'){
+        var html = '<div class="tab-pane fade active show" role="tabpanel" aria-labelledby="contact-tab">'+data+'</div>';
+        $('#main-content').html(html);
+      }
+    },
+    error: function(xhr, status, error){
+      var errorMsg = '<h1 style="color:red;padding:25px;">' + status + ": " + xhr.status + ' ' + error + '</h1>';
+      var html = '<div class="tab-pane fade active show" role="tabpanel" aria-labelledby="contact-tab">'+errorMsg+'</div>';
+      $('#main-content').html(html);
+    }
+  });
 }
 
 $(function(){
@@ -225,25 +315,33 @@ $('#left-menu').find('li.nav-item').click(function(event){
   event.stopPropagation(); //阻止冒泡事件
 });
 
+//动态绑定标签的点击事件，注意：因为是动态标签，不要直接加onclick属性添加事件，那样无法处理好冒泡事件
+$('#main-tab').on('click', '.content-tab-click', function(){
+  var url = $(this).attr('open-url');
+  open_main_content(url);
+});
+
 })
 /*---------------------end-侧边菜单栏相关处理---------------------------*/
 
 
 /*----------------------标签操作相关-------------------------*/
-function close_current_tab(e){
-  var currentTab = $(e).parent('a');
-  var liEl = currentTab.parent('li');
-  var tabContent = $(currentTab.attr('href'));
-  var prevTab = liEl.prev().children('a');
-  var prevTabContent = tabContent.prev();
-  if(currentTab.hasClass('active')){ //如果是选中标签关闭，则需要前一个标签替换为选中状态
-    prevTab.addClass('active show');
-    prevTabContent.addClass('active show');
-  }
-  liEl.remove();
-  tabContent.remove();
-  animate_tabs('forward');
-}
+//动态绑定关闭标签的点击事件，注意：因为是动态标签，不要直接加onclick属性添加事件，那样无法处理好冒泡事件
+$(function(){
+  $('#main-tab').on('click', '.close-current-tab', function(event){
+    var currentTab = $(this).parent('a');
+    var liEl = currentTab.parent('li');
+    var prevTab = liEl.prev().children('a');
+    if(currentTab.hasClass('active')){ //如果是选中标签关闭，则需要前一个标签替换为选中状态并加载相应内容
+      var url = prevTab.attr('open-url');
+      prevTab.addClass('active show');
+      open_main_content(url);
+    }
+    liEl.remove();
+    animate_tabs('forward');
+    event.stopPropagation();//阻止冒泡事件
+  })
+});
 
 //主页面标签导航盒子动态宽度变化
 function main_tab_animate(type=''){ 
@@ -332,17 +430,36 @@ function Alert(msg, bgcolor='alert-danger', timeout=3000)
 {
   var alertBox = $('#alert');
   alertBox.children('span').html(msg);
-  alertBox.addClass('show ' + bgcolor);
-  setTimeout("$('.alert').removeClass('show')", timeout);
+  alertBox.addClass('show ' + bgcolor).removeClass('hide');
+  setTimeout("$('.alert').removeClass('show " + bgcolor + "').addClass('hide')", timeout);
 }
 
 //模态内容加载器
-function actionModal(url)
+function actionModal(url, title, widthClass='')
 {
+  topLogin(url);
   url = domain + url;
   $.get(url, function(data, status, xhr){
+    if(data.code == 0){
+      Alert(data.msg, 'alert-danger');
+      return false;
+    }
+    $('#action-modal .modal-title').html(title + '操作');
+    $('#action-modal .modal-dialog').removeClass('modal-lg modal-sm');
+    if(widthClass != ''){ //modal框大小样式 modal-lg modal-sm, 默认中等大小
+      $('#action-modal .modal-dialog').addClass(widthClass);
+    }
     $('#action-modal').find('.modal-body').html(data);
   });
+}
+
+//当用户session过期或被禁用时，需要直接跳转至登录页面重新登入
+function topLogin(url)
+{
+  if(url == 'admin/login/index?top=true'){ //跳转至登录界面
+    top.location.href = domain + 'admin/login/index';
+    return false;
+  }
 }
 
 

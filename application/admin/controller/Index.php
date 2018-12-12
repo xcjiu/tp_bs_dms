@@ -2,13 +2,17 @@
 namespace app\admin\controller;
 use app\admin\logic\Auth;
 use think\Config;
+use think\Session;
 
 /**
 * 
 */
 class Index extends Base
 {
-	
+	/**
+   * 后台框架初始化
+   * 判断权限和是否已登录
+   */
 	public function index()
 	{
     $auths = Auth::auths($this->uid);
@@ -22,15 +26,52 @@ class Index extends Base
     //权限变量输出
     $this->assign($auths); 
     $this->assign('domain', $this->request->root(true) . "/");//获取当前包含域名的ROOT地址
-
-		return $this->fetch();
+    if($auths['actionAuth']){ //操作权限
+      Session::set('userAuths', array_column($auths['actionAuth'], 'link'));
+    }
+		return $this->fetch('layout/base');
 	}
+
+  //首页
+  public function home()
+  {
+    return 'home';
+  }
+
+  //锁屏或解屏操作
+  public function lockscreen()
+  {
+    if($this->request->isAjax()){
+      $type = $this->request->param('type','');     
+      $password = $this->request->param('psd', '');
+      if(!$password){
+        $this->error('请输入密码！');
+      }
+      if($type === 'lock'){ //锁屏
+        Session::set('lockScreen' . $this->uid, true); 
+        Session::set('lockscreenPsd' . $this->uid, md5($password));
+        $this->success('操作成功！');
+      }else if($type === 'unlock'){ //解屏
+        $lockscreenPsd = Session::get('lockscreenPsd' . $this->uid);
+        if($lockscreenPsd === md5($password)){
+          Session::set('lockScreen' . $this->uid, false);
+          $this->success('解屏成功！');        
+        }else{
+          $this->error('密码错误！');
+        }
+      }
+    }
+    $this->error('操作有误！');
+  }
+
+
 
   public function test()
   {
     return Auth::userRole(1);
   }
 }
+
 
 
 

@@ -4,13 +4,13 @@
 <script src="__DATEPICKER__/moment.min.js" crossorigin="anonymous"></script>
 <script src="__DATEPICKER__/datepicker.all.min.js" crossorigin="anonymous"></script>
 <{/if}>
-<h5 class="table-list-title">&nbsp;&nbsp;<{$title}></h5>
+<h5 class="table-list-title text-info">&nbsp;&nbsp;<{$title}></h5>
 <nav class="nav" id="toolbar">
   <!--操作按钮组-->
   <{notempty name="actionBtn"}>
   <ul class="nav nav-bar">
     <{foreach $actionBtn as $btn}>
-    <li class="nav-item"><button class="btn <{$btn.color}> btn-sm" data-toggle="modal" data-target="#action-modal" onclick="actionModal('<{$btn.url}>')"><{$btn.title}></button></li>&nbsp;&nbsp;
+      <li class="nav-item"><button class="btn <{$btn.color}> btn-sm" data-toggle="modal" data-target="#action-modal" onclick="actionModal('<{$btn.url}>', '<{$btn.title}>', '<{$btn.modalWidth}>')"><{$btn.title}></button></li>&nbsp;&nbsp;
     <{/foreach}>
   </ul>
   <{/notempty}>
@@ -30,7 +30,7 @@
       <{foreach $searchSelect as $option}>
       <div class="form-group">
         <select class="form-control form-control-sm" name="<{$option.name}>">
-          <option value="null" selected><{$option.title}></option>
+          <option value="" selected><{$option.title}></option>
           <{foreach $option.dropdownData as $key => $op}>
           <option value=<{$key}>><{$op}></option>
           <{/foreach}>
@@ -67,28 +67,28 @@
 $(function(){
   var primaryKey = "<{$primaryKey}>"; //主键，默认是id,如果不是id字段则要在控制器中指定
   var columns = <{$columns|json_encode}>; //要显示的字段
-  var columnsLen = columns.length;
   var checkbox = "<{$checkbox}>";
   if(checkbox){columns[0].checkbox = true} //是否开启多选框
-  for(var i=0; i<columnsLen; i++){
-    var formatter = columns[i].formatter;
-    if(typeof formatter == 'object'){
-      var filter = formatter;
-      columns[i].formatter = function(value, row, index){ //字段值过滤器
-        return filter[value];
+  columns.forEach(function(column, i){
+    var formatter = column.formatter;
+    if(typeof formatter === 'object'){
+      column.formatter = function(value, row, index){ //字段值过滤器
+        return formatter[value];
       }
     }
     if(formatter == 'datetime'){
-      columns[i].formatter = function(value, row, index){ //时间截转换器（YYYY-mm-dd HH:ii:ss）
+      column.formatter = function(value, row, index){ //时间截转换器（YYYY-mm-dd HH:ii:ss）
         return moment(value*1000).format('YYYY-MM-DD HH:mm:ss');
       }
     }
     if(formatter == 'date'){
-      columns[i].formatter = function(value, row, index){ //时间截转换器（YYYY-mm-dd HH:ii:ss）
+      column.formatter = function(value, row, index){ //时间截转换器（YYYY-mm-dd HH:ii:ss）
         return moment(value*1000).format('YYYY-MM-DD');
       }
     }
-  }
+    columns[i] = column;
+  });
+
   var columnBtn = <{$columnBtn|json_encode}> //数据操作项
   var columnBtnLen = columnBtn.length;
   if(columnBtnLen>0){ //添加操作项
@@ -99,9 +99,14 @@ $(function(){
       formatter: function(value, row, index){
         var html = '';
         for(var i=0; i<columnBtnLen; i++){
-          var url = domain + columnBtn[i]["url"] + '/id/' + row[primaryKey];
+          var url = columnBtn[i]["url"] + '?id=' + row[primaryKey];
           url = "'" + url + "'"; //引号多了放下面不好组装！
-          html += '<button class="btn btn-sm '+columnBtn[i]['color']+' '+columnBtn[i]['DIYclass']+'" onclick="columnBtnAction(' + url +')" style="padding: .25rem .25rem;">'+columnBtn[i]['title']+'</button>&nbsp;';
+          var btnTitle = columnBtn[i]['title'];
+          if(typeof columnBtn[i]['title'] === 'object'){ //根据字段值来动态展示按钮标题
+            var column = columnBtn[i]['title']['column'];
+            btnTitle = columnBtn[i]['title']['title'][row[column]];
+          }
+          html += '<button class="btn btn-sm '+columnBtn[i]['color']+' '+columnBtn[i]['DIYclass']+'" data-toggle="modal" data-target="#action-modal" onclick="actionModal(' + url + ",'" + btnTitle + "'" + ')" style="padding: .25rem .25rem;">'+btnTitle+'</button>&nbsp;';
         }
         return html;
       }
@@ -110,10 +115,11 @@ $(function(){
 
   /*加载数据*/
   $('#data-table').bootstrapTable({
-    url: domain + 'admin/sys_user/index?type=refreshData',
+    url: domain + "<{$dataUrl}>",
     queryParams: function(params){ //提交条件参数
       return $('#search-form').serializeArray().concat([{name:'offset', value:params.offset}, {name:'limit', value:params.limit}]);
     },
+    cache: false, //禁用AJAX数据缓存
     striped: true, //设置为隔行变色效果
     showToggle: true, //显示切换视图按钮
     undefinedText: '---', //当数据为undefined时显示的字符
@@ -135,44 +141,38 @@ $(function(){
     queryParamsType : "limit",
     columns: columns,
     responseHandler: function(res){
-      return {'total': res.total, 'rows': res.data}
+      return {'total': res.total, 'rows': res.rows}
     }
   });
+
 $('#data-search').click(function(){
   $('#data-table').bootstrapTable('refresh');
 });
-/*数据操作项请求*/
-function columnBtnAction(url){
-  $.get(url, function(data, status, xhr){
-    
-  });
-}
 
 /*日期时间选择器*/
-function dateTool(type='single', format='YYYY-MM-DD', min='', max='', shortcut=true, shortcutOptions=[]){
-  if(shortcutOptions.length<1){ 
-    //默认快捷项，可以在控制器中自定义,注意单选与双选的不同
-    shortcutOptions = type=='single' ? [{name: '今天',day: '0'},{name: '昨天',day: '-1'},{name: '三天前',day: '-3'},{name: '一周前',day: '-7'},{name: '30天前',day: '-30'}] : [{name: '今天',day: '0,0'},{name: '昨天',day: '-1,0'},{name: '三天前',day: '-3,0'},{name: '一周前',day: '-7,0'},{name: '30天前',day: '-30,0'}];
+  function dateTool(type='single', format='YYYY-MM-DD', min='', max='', shortcut=true, shortcutOptions=[]){
+    if(shortcutOptions.length<1){ 
+      //默认快捷项，可以在控制器中自定义,注意单选与双选的不同
+      shortcutOptions = type=='single' ? [{name: '今天',day: '0'},{name: '昨天',day: '-1'},{name: '三天前',day: '-3'},{name: '一周前',day: '-7'},{name: '30天前',day: '-30'}] : [{name: '今天',day: '0,0'},{name: '昨天',day: '-1,0'},{name: '三天前',day: '-3,0'},{name: '一周前',day: '-7,0'},{name: '30天前',day: '-30,0'}];
+    }
+    var dateObj = {
+      hasShortcut: true, //显示快捷选择，对应shortcutOptions
+      format: format, //日期时间格式
+      shortcutOptions: shortcutOptions //快捷选择项
+    };
+    if(min != ''){ //最小日期时间
+      dateObj.min = min;
+    }
+    if(max != ''){ //最大日期时间
+      dateObj.max = max;
+    }
+    if(type == 'single'){ //单选择器
+      $('.J-datepicker-day').datePicker(dateObj);//加载日期时间器
+    }else{ //双选择器
+      dateObj.isRange = true;
+      $('.J-datepicker-range-day').datePicker(dateObj);
+    }
   }
-  var dateObj = {
-    hasShortcut: true, //显示快捷选择，对应shortcutOptions
-    format: format, //日期时间格式
-    shortcutOptions: shortcutOptions //快捷选择项
-  };
-  if(min != ''){ //最小日期时间
-    dateObj.min = min;
-  }
-  if(max != ''){ //最大日期时间
-    dateObj.max = max;
-  }
-  if(type == 'single'){ //单选择器
-    $('.J-datepicker-day').datePicker(dateObj);//加载日期时间器
-  }else{ //双选择器
-    dateObj.isRange = true;
-    $('.J-datepicker-range-day').datePicker(dateObj);
-  }
-  
-}
 
 var datePickerObj = <{$datePicker|json_encode}>;
 if('name' in datePickerObj){
@@ -182,7 +182,7 @@ var datePickersObj = <{$datePickers|json_encode}>;
 if('name' in datePickersObj){
   dateTool('two', datePickersObj.format, datePickersObj.min, datePickersObj.max, datePickersObj.shortcut, datePickersObj.shortcutOptions)
 }
+
 })
 
-$('.btn-sm');
 </script>

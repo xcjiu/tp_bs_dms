@@ -1,5 +1,6 @@
 <?php
 namespace app\common\builder;
+use think\Session;
 
 /**
 * 数据页面构建器
@@ -19,6 +20,7 @@ class Datalist extends Builder
     'columns'      => [], //要显示的字段组
     'columnBtn'    => [], //每一条数据的操作项
     'checkbox'     => false, //是否开启多选框
+    'dataUrl'      => '', //页面数据加载地址，为空表示为当前控制器加载，如果控制器中代码较多可以指定逻辑方法来加载数据
   ];
 
   /**
@@ -37,11 +39,14 @@ class Datalist extends Builder
    * @param  string $title  操作名称
    * @param  string $url 操作目标，即要操作的方法url
    * @param  string $color  按钮颜色类名，可参考bootstrap4按钮颜色样式，如:btn-success
+   * @param  string $modalWidth  模态框大小，可参考bootstrap4的Modal，如:modal-lg
    * @return this
    */
-  public function actionBtn($title, $url, $color='btn-info')
+  public function actionBtn($title, $url, $color='btn-info', $modalWidth='')
   {
-    $this->templateData['actionBtn'][] = ['title'=>$title, 'url'=>$url, 'color'=>$color];
+    if( !in_array($url, Session::get('userAuths')) ){ //确认权限
+      $this->templateData['actionBtn'][] = ['title'=>$title, 'url'=>$url, 'color'=>$color, 'modalWidth'=>$modalWidth];
+    }
     return $this;
   }
 
@@ -58,13 +63,14 @@ class Datalist extends Builder
   /**
    * 条件查询输入框
    * @param  string $name        name属性值
+   * @param  string $title       标题说明，不填则默认无标题说明
    * @param  string $placeholder 框内提示文字
    * @param  string $style input框样式，可以自定义修改默认的大小,格式为css样式格式
    * @return this
    */
-  public function searchInput($name, $placeholder, $style='')
+  public function searchInput($name, $placeholder, $title='', $style='')
   {
-    $this->templateData['searchInput'][] = ['name'=>$name, 'placeholder'=>$placeholder, 'style'=>$style];
+    $this->templateData['searchInput'][] = ['name'=>$name, 'placeholder'=>$placeholder, 'title'=>$title, 'style'=>$style];
     return $this;
   }
 
@@ -149,8 +155,10 @@ class Datalist extends Builder
   }
 
   /**
-   * 数据操作项
-   * @param  string $title 操作标题
+   * 数据操作项按钮组
+   * @param  string | array   $title 操作标题, 如果要根据指定字段值来动态展示按钮，则参数为数组，如：
+   * $title = ['column'=>'status', 'title'=>['1'=>'禁用', '0'=>'启用', '2'=>'启用']]，column指定的字段名, title标题名称规则
+   * 这会根据数组中的规则来动态展示操作按钮标题
    * @param  string $url   操作方法，即操作url
    * @param  string $color 按钮颜色类，参考bootstrap4的按钮颜色，默认：btn-info
    * @param  string $DIYclass 自定义类名，方便查找指定类名的操作项或改变该按钮的样式
@@ -158,7 +166,9 @@ class Datalist extends Builder
    */
   public function columnBtn($title, $url, $color='btn-info', $DIYclass='')
   {
-    $this->templateData['columnBtn'][] = ['title'=>$title, 'url'=>$url, 'color'=>$color, 'DIYclass'=>$DIYclass];
+    if( in_array($url, Session::get('userAuths')) ){ //确认权限
+      $this->templateData['columnBtn'][] = ['title'=>$title, 'url'=>$url, 'color'=>$color, 'DIYclass'=>$DIYclass];
+    }
     return $this;
   }
 
@@ -200,6 +210,7 @@ class Datalist extends Builder
   {
     $template = $template ?: $this->template;
 
+    $this->templateData['dataUrl'] = $this->templateData['dataUrl'] ?: $this->request->path();
     $this->assign($this->templateData);
 
     return parent::fetch($template);
