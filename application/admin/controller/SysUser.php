@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 use think\Db;
 use app\admin\model\SysUser as UserModel;
+use app\admin\logic\SysUser as UserLogic;
 /**
 * 
 */
@@ -13,64 +14,49 @@ class SysUser extends Base
    */
   public function index()
   {
-    $condition = [];
-    $username = $this->request->get('username','');
-    $id = $this->request->get('id','');
-    $limit = $this->request->get('limit', 10);
-    $offset = $this->request->get('offset', 0);
-    if($username){
-      $condition['username'] = $username;
-    }
-    if($id){
-      $condition['id'] = $id;
-    }
-    if($condition){
-      $data = UserModel::where($condition)->limit($offset, $limit)->select();
-      $total = UserModel::where($condition)->count();
-    }else{
-      $data = UserModel::limit($offset, $limit)->select();
-      $total = UserModel::count();
-    }
-    //此处不能只判断为ajax请求就请求数据，因为页面输出也是ajax请求过去的，刷新或搜索数据带上type=rereshData判断
-    if($this->request->param() && $this->request->isAjax()){
-      return ['total'=>$total,'rows'=>$data]; //注意，ajax请求自动转换成json对象，这里不需要进行转换
+    $params = $this->request->get();
+    if($params && $this->request->isAjax()){
+      return UserLogic::getRows($params); //注意，ajax请求自动转换成json对象，这里不需要进行转换
     }
     return builder('datalist')
-      ->title('用户列表')
-      ->actionBtn('新增', 'admin/sys_user/add')
-      ->searchBtn()
-      ->searchInput('id', '用户ID')
-      ->searchInput('username', '用户名')
-      ->column('id', '用户ID')
-      ->column('username', '用户名')
-      ->column('email', '邮箱')
-      ->column('phone', '电话')
-      ->column('status', '状态', [1=>'正常', 0=>'禁用', 2=>'待审核'])
-      ->column('create_time', '注册时间')
-      ->column('update_time', '更新时间')
-      ->columnBtn('编辑', 'admin/sys_user/edit', 'btn-info')
-      ->columnBtn(['column'=>'status', 'title'=>['1'=>'禁用', '0'=>'启用', '2'=>'启用']], 'admin/sys_user/forbidden', 'btn-warning')
-      ->textAlign('center')
-      ->fetch();
+    ->title('用户列表')
+    ->actionBtn('新增', 'admin/sys_user/add')
+    ->searchBtn()
+    ->searchInput('id', '用户ID')
+    ->searchInput('username', '用户名')
+    ->column('id', '用户ID')
+    ->column('username', '用户名')
+    ->column('email', '邮箱')
+    ->column('phone', '电话')
+    ->column('status', '状态', [1=>'正常', 0=>'禁用', 2=>'待审核'])
+    ->column('create_time', '注册时间')
+    ->column('update_time', '更新时间')
+    ->columnBtn('编辑', 'admin/sys_user/edit', 'btn-info')
+    ->columnBtn(['column'=>'status', 'title'=>['1'=>'禁用', '0'=>'启用', '2'=>'启用']], 'admin/sys_user/forbidden', 'btn-warning')
+    ->textAlign('center')
+    ->fetch();
   }
 
+  /**
+   * 用户新增
+   */
   public function add()
   {
-    if($this->request->post() && $this->request->isAjax()){
-      $username = $this->request->post('username','');
-      $password = password_hash($this->request->post('password',''), PASSWORD_DEFAULT);
-      $status = (int)$this->request->post('status', 1);
-      $res = UserModel::insert(['username'=>$username, 'password'=>$password, 'status'=>$status, 'create_time'=>date('Y-m-d H:i:s')]);
-      if($res){
+    $data = $this->request->post();
+    if($data && $this->request->isAjax()){
+      $result = UserLogic::add($data); 
+      if($result === true){
         $this->success('新增成功！','index');
       }else{
-        $this->error('新增失败！');
+        $this->error($result);
       }
     }
       
     return builder('form')
-      ->input('username', '用户名')
-      ->input('password', '密码', '输入不少于6位数的密码', 'password')
+      ->input('username', '用户名（必须）')
+      ->input('password', '密码（必须）', '', '输入密码', 'password')
+      ->input('email', '电子邮箱', '', '请输入', 'text', false)
+      ->input('phone', '手机号码', '', '请输入', 'text', false)
       ->select('status', '状态', ['1'=>'正常', '2'=>'待审核', '0'=>'禁用'], '1')
       ->method('POST')
       ->fetch();
@@ -84,35 +70,32 @@ class SysUser extends Base
   public function edit()
   { 
     $id = $this->request->param('id', '');
-    if($this->request->isAjax() && $id){
-      $user = UserModel::get($id);
-      $postData = $this->request->post();
-      //return ['code'=>1, 'msg'=>'test', 'data'=>$postData];
-      if($postData){
-        $user->username = $this->request->post('username', '');
-        $password = $this->request->post('password', '');
-        if(!empty($password)){
-          $user->password = password_hash($password, PASSWORD_DEFAULT);
-        }
-        $user->status = (int)$this->request->post('status', '');
-        $res = $user->save();
-        if($res){
-          $this->success('编辑成功！','index');
-        }else{
-          $this->error('编辑失败！');
-        }
-      }
-      
-      
-      return builder('form')
-      ->input('username', '用户名', $user->username)
-      ->input('password', '密码', '', '留空表示不修改密码', 'password', false)
-      ->select('status', '状态', ['1'=>'正常', '2'=>'待审核', '0'=>'禁用'], $user->status)
-      ->method('POST')
-      ->fetch();
+    if(!$id){
+      $this->error('缺少id参数');
     }
+    $user = UserModel::get($id);
+    $data = $this->request->post();
+    if($data){   
+      $result = UserLogic::edit($user, $data);
+      if($result === true){
+        $this->success('编辑成功！', 'index');
+      }else{
+        $this->error($result);
+      }
+    }
+      
+    return builder('form')
+    ->input('password', '密码', '', '留空表示不修改密码', 'password', false)
+    ->input('email', '电子邮箱', $user->email)
+    ->input('phone', '手机号码', $user->phone)
+    ->select('status', '状态', ['1'=>'正常', '2'=>'待审核', '0'=>'禁用'], $user->status)
+    ->method('POST')
+    ->fetch();
   }
 
+  /**
+   * 用户禁用
+   */
   public function forbidden()
   { 
     $title = '';
@@ -135,5 +118,108 @@ class SysUser extends Base
     ->id($id)
     ->fetch();
   }
+
+  /**
+   * 个人中心
+   * @return [type] [description]
+   */
+  public function detail()
+  {
+    $user = UserModel::get($this->uid);
+    if($this->request->post()){
+      $email = $this->request->post('email', '');
+      $phone = $this->request->post('phone', '');
+      if($email && !preg_match("/^[\w\-]+\@[\w\-]+\.[a-z]{2,3}$/",$email)){
+        $this->error('邮箱格式不正确！');
+      }
+      if($phone && !preg_match("/^1[3456789]\d{9}$/", $phone)){
+        $this->error('请输入正确的手机号码！');
+      }
+      $user->email = $email ?: $this->email;
+      $user->phone = $phone ?: $this->phone;
+      if($user->save()){
+        $this->success('操作成功！');
+      }else{
+        $this->error('无操作');
+      }
+    }
+    
+    return builder('form')
+    ->input('username', '账号', $user->username, '', 'text', true, true)
+    ->input('email', '电子邮箱', $user->email)
+    ->input('phone', '手机号码', $user->phone)
+    ->method('POST')
+    ->fetch();
+  }
+
+  /**
+   * 修改密码
+   * @return [type] [description]
+   */
+  public function editpsd()
+  {      
+    $user = UserModel::get($this->uid);
+    $password = $this->request->post('password', '');
+    $oldpsd = $this->request->post('oldpsd', '');
+    
+    if($password){
+      if($oldpsd && !password_verify($oldpsd, $user->password)){
+        $this->error('旧密码错误！');
+      }
+      $user->password = password_hash($password, PASSWORD_DEFAULT);
+      if($user->save()){
+        $this->success('操作成功！');
+      }else{
+        $this->error('无操作');
+      }
+    }
+    
+    return builder('form')
+    ->input('oldpsd', '旧密码', '', '请输入', 'password')
+    ->input('password', '新密码', '', '请输入', 'password')
+    ->method('POST')
+    ->fetch();
+  }
+
+  /**
+   * 编辑头像
+   * @return [type] [description]
+   */
+  public function portrait()
+  {
+    if($_FILES){
+      $file = $_FILES['files'];
+      $fileName = $file['name'];
+      $fileSize = $file['size'];
+      $fileTemp = $file['tmp_name'];
+      $prefix = substr($fileName, strrpos($fileName, '.') + 1);
+      if(!in_array($prefix, ['jpg','jpeg','gif','png'])){
+        $this->error('图片格式错误！请上传 jpg,jpeg,gif,png 格式的图片');
+      }
+      if($fileSize > 2*1024*1024){
+        $this->error('请上传小于2MB大小的图片');
+      }
+      $newName = 'sysUser' . $this->uid . '.' . $prefix;
+      $user = UserModel::get($this->uid);
+      if( $user->portrait != 'images/portrait/' . $newName ) { //不相同才更新数据库
+        $user->portrait = 'images/portrait/' . $newName;
+        $res = $user->save();
+        if(!$res){
+          $this->error('数据保存失败！');
+        }
+      } 
+      if( move_uploaded_file($fileTemp, ROOT_PATH . '/public/static/admin/images/portrait/' . $newName) ){
+        $this->success('更改成功！');
+      }else{
+        $this->error('文件上传失败！');
+      }
+    }
+    
+    return builder('form')
+    ->file('portrait', '选择头像文件')
+    ->method('POST')
+    ->fetch();
+  }
+
 
 }

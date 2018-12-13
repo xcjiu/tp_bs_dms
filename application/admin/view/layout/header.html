@@ -22,7 +22,7 @@
         <ul class="navbar-nav" id="module-action">
           <li class="nav-item pr-2">
             <a href="javacript:void(0)" class="nav-link pt-0 pb-0 btn text-white" id="user-info">
-              <img class="rounded-circle" src="__ADMIN__/images/user3.jpg" width="38" height="38" alt="用户头像">
+              <img class="rounded-circle" src="__ADMIN__/<{$sysUser.portrait}>" width="38" height="38" alt="用户头像">
             </a>
           </li>
           <li class="nav-item pr-2"><a class="nav-link btn text-white" id="change-theme" href="#">换肤</a></li>
@@ -37,13 +37,13 @@
     <!--user profile card-->
     <div class="card bg-white text-center shadow hide" id="user-info-card">
       <div class="card-header">
-        <img class="rounded-circle" width="150" height="150" src="__ADMIN__/images/user3.jpg" alt="Card image cap">
-        <h3>username</h3>
-        <p>注册时间：2018-08-08 08:00:00</p>
+        <img class="rounded-circle" width="150" height="150" src="__ADMIN__/<{$sysUser.portrait}>" alt="Card image cap" title="修改头像" style="cursor:pointer;" onclick="actionModal('admin/sys_user/portrait', '编辑头像')">
+        <h3><{$sysUser.username}></h3>
+        <p>注册时间：<{$sysUser.create_time}></p>
       </div>
       <div class="card-footer">
-        <button class="btn btn-sm btn-primary pull-left">个人中心</button>
-        <button class="btn btn-sm btn-success pull-right">编辑资料</button>
+        <button class="btn btn-sm btn-primary pull-left" onclick="actionModal('admin/sys_user/detail', '个人中心')">个人中心</button>
+        <button class="btn btn-sm btn-success pull-right" onclick="actionModal('admin/sys_user/editpsd', '修改密码')">修改密码</button>
       </div>
     </div>
 

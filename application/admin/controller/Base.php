@@ -17,13 +17,14 @@ class Base extends Controller
 	public function _initialize()
 	{
     $this->checkController(); //检查控制器是否存在，优化URL
-    $this->uid = Login::isLogin();
-		if(!$this->uid){ 
+    $user = Login::isLogin();
+		if(!$user){ 
       $this->redirect('admin/login/index?top=true');
     }
-    //var_dump(Session::get('userAuths'));die;
+    $this->uid = $user->id;
     $lockScreen = Session::get('lockScreen'. $this->uid)===true ? '' : 'hide';
     $this->assign('lockScreen', $lockScreen); //是否锁屏状态
+    $this->assign('sysUser', $user);
 	}
 
 

@@ -429,8 +429,9 @@ $(window).resize(function(){
 function Alert(msg, bgcolor='alert-danger', timeout=3000)
 {
   var alertBox = $('#alert');
+  alertBox.removeClass('hide');
   alertBox.children('span').html(msg);
-  alertBox.addClass('show ' + bgcolor).removeClass('hide');
+  alertBox.addClass('show ' + bgcolor);
   setTimeout("$('.alert').removeClass('show " + bgcolor + "').addClass('hide')", timeout);
 }
 
@@ -443,7 +444,8 @@ function actionModal(url, title, widthClass='')
     if(data.code == 0){
       Alert(data.msg, 'alert-danger');
       return false;
-    }
+    }    
+    $('#action-modal').modal('show');
     $('#action-modal .modal-title').html(title + '操作');
     $('#action-modal .modal-dialog').removeClass('modal-lg modal-sm');
     if(widthClass != ''){ //modal框大小样式 modal-lg modal-sm, 默认中等大小

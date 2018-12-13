@@ -1,7 +1,5 @@
 <?php
 namespace app\admin\logic;
-use think\Request;
-use think\Session;
 use app\admin\model\AuthAssignment;
 use app\admin\model\AuthRule;
 
@@ -23,7 +21,7 @@ class Auth
       $limit = $params['limit'] ?: 15;
       unset($params['offset']);
       unset($params['limit']);
-      unset($params['_']); //这个参数是数据表插件自带的，这里不需要
+      if(isset($params['_'])){ unset($params['_']); }//这个参数是数据表插件自带的，这里不需要
       foreach ($params as $key => $value) {
         if($value != ''){
           $condition[$key] = $value;
@@ -55,6 +53,9 @@ class Auth
   {
     if(!$data['title'] || !$data['link']){
       return '标题或链接为必填字段！';
+    }
+    if(AuthRule::where('link', $data['link'])->find()){
+      return '该权限已存在！';
     }
     if( (new AuthRule)->allowField(true)->save($data) ){
       return true;

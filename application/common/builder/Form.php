@@ -14,8 +14,11 @@ class Form extends Builder
     'radios'    => [], //单选组
     'checkboxs' => [], //多选组
     'files'     => [], //文件选择组
-    'textareas'  => [], //文本框组
+    'textareas' => [], //文本框组
     'submitUrl' => '', //表单提交给后台地址，默认为空表示为控制器当前url地址
+    'extraHtml' => '', //额外自定义html代码
+    'extraStyle'=> '', //自定认样式，格式<style>...</style>
+    'extraJs'   => '', //额外自定义js代码, 格式<script>...</script>
   ];
 
   /**
@@ -41,16 +44,52 @@ class Form extends Builder
   }
 
   /**
+   * 添加自定义html
+   * @param  string $html 自定义html
+   * @return this
+   */
+  public function extraHtml($html='')
+  {
+    $this->templateData['extraHtml'] = (string)$html;
+    return $this;
+  }
+
+  /**
+   * 添加自定义样式
+   * @param  string $style 自定义样式
+   * @return this
+   */
+  public function extraStyle($style='')
+  {
+    $this->templateData['extraStyle'] = (string)$style;
+    return $this;
+  }
+
+  /**
+   * 添加自定义js
+   * @param  string $Js 自定义Js
+   * @return this
+   */
+  public function extraJs($js='')
+  {
+    $this->templateData['extraJs'] = (string)$js;
+    return $this;
+  }
+
+  /**
    * 添加input框
    * @param  string  $title       标题说明
    * @param  string  $name        name属性名称
+   * @param  string  $default     默认值
    * @param  string  $placeholder 框内提示文字
+   * @param  string  $type        input类型
    * @param  boolean $required    是否必须，默认true为必须
+   * @param  boolean $readOnly    是否只读，默认false为否
    * @return this
    */
-  public function input($name, $title, $default='', $placeholder='请输入', $type="text", $required=true)
+  public function input($name, $title, $default='', $placeholder='请输入', $type="text", $required=true, $readOnly=false)
   {
-    $this->templateData['inputs'][] = ['title'=>$title, 'name'=>$name, 'default'=>$default, 'type'=>$type, 'placeholder'=>$placeholder, 'required'=>$required];
+    $this->templateData['inputs'][] = ['title'=>$title, 'name'=>$name, 'default'=>$default, 'type'=>$type, 'placeholder'=>$placeholder, 'required'=>$required, 'readOnly'=>$readOnly];
     return $this;
   }
 

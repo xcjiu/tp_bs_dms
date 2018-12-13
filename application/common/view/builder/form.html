@@ -1,9 +1,11 @@
+<{$extraStyle}>
+
 <!--form-->
-<form <{$files?='enctype="multipart/form-data"'}> id="builder-form" style="font-size: 18px;">
+<form id="builder-form" style="font-size: 18px;">
   <{foreach $inputs as $input}>
   <div class="form-group">
     <label class="text-primary pl-1"><{$input.title}></label>
-    <input type="<{$input.type}>" class="form-control" name="<{$input.name}>" placeholder="<{$input.placeholder}>" value="<{$input.default}>" <{$input.required?='required'}>>
+    <input type="<{$input.type}>" class="form-control" name="<{$input.name}>" placeholder="<{$input.placeholder}>" value="<{$input.default}>" <{$input.required?='required'}> <{$input.readOnly?=' readonly'}>> 
   </div>
   <{/foreach}>
 
@@ -48,32 +50,47 @@
   <{foreach $files as $file}>
   <div class="form-group">
     <label class="text-primary pl-1"><{$file.title}></label>
-    <input type="file" class="form-control-file" name="<{$file.name}>" <{$file.required?='required'}>>
+    <input type="file" class="form-control-file" name="files" <{$file.required?='required'}>>
   </div>
   <{/foreach}>
 
   <{foreach $textareas as $textarea}>
   <div class="form-group">
     <label class="text-primary pl-1"><{$textarea.title}></label>
-    <textarea type="file" class="form-control-file" name="<{$textarea.name}>" <{$textarea.required?='required'}>></textarea>
+    <textarea type="textarea" class="form-control-file" name="<{$textarea.name}>" <{$textarea.required?='required'}>></textarea>
   </div>
   <{/foreach}>
 
   <button type="submit" class="btn btn-primary btn-lg btn-block">提 交</button>
 </form>
 
+<{$extraHtml}>
+
 <script>
 var method = "<{$method}>";
 var url = domain + "<{$submitUrl}>";
 $("#builder-form").submit(function(event){
   event.preventDefault(); //阻止表单提交
-  var data = method=="GET" ? $("#builder-form").serialize() : $("#builder-form").serializeArray();
+  //var data = method=="GET" ? $("#builder-form").serialize() : $("#builder-form").serializeArray();
+  var formData = new FormData($('#builder-form')[0]); //用上面那种形式无法处理好文件上传！
+  console.log($('#builder-form')[0]);
+  var files = $('.form-group').find('input[type="file"]'); //涉及到文件上传时
+  if(files.length == 1){ //单文件上传
+    formData.append('files', files[0].files[0]);
+  }else if(files.length > 1){ //多文件上传
+    for(file in files){
+      formData.append('files[]', file[0].files[0]);
+    }
+  }
   $.ajax({
     url: url,
     type: method,
-    data: data,
+    data: formData,
+    //这两个设置项必填
+    contentType: false,
+    processData: false,
     success: function(result,status,xhr){
-      console.log(data);
+      //console.log(data);
       if(result.code == 1){ 
         $('#action-modal').modal('hide');
         Alert(result.msg, 'alert-success');
@@ -87,3 +104,5 @@ $("#builder-form").submit(function(event){
   });
 });
 </script>
+
+<{$extraJs}>

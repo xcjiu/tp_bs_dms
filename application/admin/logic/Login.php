@@ -118,18 +118,19 @@ class Login
 	 */
 	public static function isLogin()
 	{
-		$uid = false;
 		if($cookieUser = Cookie::get('sys_user')){ //记住登入
-			$user = User::where('id', $cookieUser['id'])->where('status','<>', 0)->find();
+			$user = User::where('id', $cookieUser['id'])->where('status','<>', 0)->field('id,username,portrait,email,phone,create_time,token')->find();
 			if($user && $user['token']===$cookieUser['token']){
-				$uid = $user->id;
+				$user->token = '';
+				return $user;
 			}
 		}
 		if($user = Session::get('sysUser')){
-			if(User::where('id', $user['id'])->where('status','<>', 0)->find()){
-				$uid = $user['id'];
+			$currentUser = User::where('id', $user['id'])->where('status','<>', 0)->field('id,username,portrait,email,phone,create_time')->find();
+			if($currentUser){
+				return $currentUser;
 			}
 		}
-		return $uid;
+		return false;
 	}
 }
