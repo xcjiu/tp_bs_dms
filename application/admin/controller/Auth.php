@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\controller;
 use app\admin\model\AuthRule;
+use app\admin\model\AuthRole;
 use app\admin\logic\Auth as AuthLogic;
 
 /**
@@ -160,5 +161,99 @@ class Auth extends Base
     ->id($id)
     ->fetch(); //先来个确认弹框
   }
+
+  /**
+   * 角色管理
+   * @return [type] [description]
+   */
+  public function role()
+  {
+    $params = $this->request->param();
+    if($params && $this->request->isAjax()){
+      return AuthLogic::getRoles($params);
+    }
+    return builder('datalist')
+    ->title('角色管理')
+    ->actionBtn('新增', 'admin/auth/addrole')
+    ->searchBtn()
+    ->searchInput('name', '角色名称')
+    ->column('id', '角色ID')
+    ->column('name', '角色名称')
+    ->column('auth_ids', '拥有的权限id组')
+    ->column('status', '状态', [0=>'禁用', 1=>'启用'])
+    ->column('description', '说明')
+    ->column('create_time', '创建时间', 'datetime')
+    ->column('update_time', '更新时间', 'datetime')
+    ->columnBtn('分配权限', 'admin/auth/assignmentAuth')
+    ->columnBtn('编辑', 'admin/auth/editRole')
+    ->columnBtn(['column'=>'status', 'title'=>['1'=>'禁用', '0'=>'启用']], 'admin/auth/forbiddenRole', 'btn-warning')
+    ->columnBtn('删除', 'admin/auth/deleteRole', 'btn-danger')    
+    ->fetch();
+  }
+
+  /**
+   * 角色的分配权限
+   * @return [type] [description]
+   */
+  public function assignmentAuth()
+  {
+    $id = (int)$this->request->param('id', '');
+    $auth_id = (int)$this->request->param('auth_id', '');
+    $auth_id = $auth_id ?: (int)$this->request->param('extendsParam', '');
+    $confirm = $this->request->post('confirm');
+    //return $this->request->param();
+    if($this->request->isAjax() && $confirm && $id && $auth_id){
+      $authRole = AuthRole::get($id);
+      if($authRole){
+        $authIds = $authRole->auth_ids;
+        if(empty($authIds)){
+          $authRole->auth_ids = (string)$auth_id;
+        }else{
+          $aids = explode(',', $authIds);
+          if(in_array($auth_id, $aids)){
+            $key = array_search($auth_id, $aids);
+            unset($aids[$key]);
+            $authRole->auth_ids = implode(',', $aids);
+          }else{
+            $authRole->auth_ids .= ",$auth_id";
+          }
+        }
+        if($authRole->save()){
+          $this->success('操作成功！');
+        }
+      }
+      $this->error('操作失败！');
+    }
+    $title = $this->request->get('check')==1 ? '解除该权限' : '添加该权限';
+    return builder('confirm')
+    ->title($title)
+    ->id($id)
+    ->extendsParam($auth_id)
+    ->fetch();
+  }
+
+  /**
+   * 权限分配，针对所有角色进行
+   * @return [type] [description]
+   */
+  public function authAssignment()
+  {
+    $rolesName = AuthLogic::rolesName();
+    $params = $this->request->param();
+    if($params && $this->request->isAjax()){
+      return AuthLogic::authAssignment($params);
+    }
+    
+    $builder = builder('datalist')
+    ->title('权限分配')
+    ->column('title','权限名称', '', 'left');
+    if($rolesName){
+      foreach ($rolesName as $id => $name) {
+        $builder = $builder->column('role' . $id, $name);
+      }
+    }
+    return $builder->fetch();
+  }
+
 
 }

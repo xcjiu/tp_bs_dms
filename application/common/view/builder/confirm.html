@@ -11,10 +11,15 @@
     $('#action-modal').modal('hide');
   });
   $('#confirm-box').children('.pull-right').click(function(){
+    var extendsParam = "<{$extendsParam}>";
+    var data = {id: "<{$id}>", confirm: true};
+    if(extendsParam.length > 0){ //如果有额外参数
+      data.extendsParam = extendsParam;
+    }
     $.ajax({
       url: domain + "<{$confirmUrl}>",
       type: 'POST',
-      data: {id:"<{$id}>", confirm: true},
+      data: data,
       success: function(result){
         if(result.code == 1){
           $('#action-modal').modal('hide');

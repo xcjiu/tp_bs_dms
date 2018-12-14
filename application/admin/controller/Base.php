@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 use think\Controller;
 use think\Session;
+use app\admin\logic\Auth as AuthLogic;
 use app\admin\logic\Login;
 
 /**
@@ -24,7 +25,10 @@ class Base extends Controller
     $this->uid = $user->id;
     $lockScreen = Session::get('lockScreen'. $this->uid)===true ? '' : 'hide';
     $this->assign('lockScreen', $lockScreen); //是否锁屏状态
-    $this->assign('sysUser', $user);
+    $this->assign('sysUser', $user); //用户基本信息
+    if(!Session::get('userAuths')){ //用户具体操作的权限
+      Session::set('userAuths', array_column(AuthLogic::auths($this->uid), 'link'));
+    }
 	}
 
 

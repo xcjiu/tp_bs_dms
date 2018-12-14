@@ -73,7 +73,6 @@ $("#builder-form").submit(function(event){
   event.preventDefault(); //阻止表单提交
   //var data = method=="GET" ? $("#builder-form").serialize() : $("#builder-form").serializeArray();
   var formData = new FormData($('#builder-form')[0]); //用上面那种形式无法处理好文件上传！
-  console.log($('#builder-form')[0]);
   var files = $('.form-group').find('input[type="file"]'); //涉及到文件上传时
   if(files.length == 1){ //单文件上传
     formData.append('files', files[0].files[0]);

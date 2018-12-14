@@ -199,22 +199,21 @@ class SysUser extends Base
       if($fileSize > 2*1024*1024){
         $this->error('请上传小于2MB大小的图片');
       }
-      $newName = 'sysUser' . $this->uid . '.' . $prefix;
+      $newFile = 'images/portrait/sysUser' . $this->uid . '.' . $prefix;
       $user = UserModel::get($this->uid);
-      if( $user->portrait != 'images/portrait/' . $newName ) { //不相同才更新数据库
-        $user->portrait = 'images/portrait/' . $newName;
+      if( $user->portrait != $newFile ) { //不相同才更新数据库
+        $user->portrait = $newFile;
         $res = $user->save();
         if(!$res){
           $this->error('数据保存失败！');
         }
       } 
-      if( move_uploaded_file($fileTemp, ROOT_PATH . '/public/static/admin/images/portrait/' . $newName) ){
+      if( move_uploaded_file($fileTemp, ROOT_PATH . '/public/static/admin/' . $newFile) ){
         $this->success('更改成功！');
       }else{
         $this->error('文件上传失败！');
       }
     }
-    
     return builder('form')
     ->file('portrait', '选择头像文件')
     ->method('POST')

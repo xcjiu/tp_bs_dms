@@ -1,0 +1,59 @@
+<style>
+  #select-tree ul {
+    list-style: none;
+    padding-left: 12px;
+  }
+  #select-tree input[type=checkbox] {
+    width: 15px;
+    height: 15px;
+    margin-top: -2px;
+    margin-bottom: 1px;
+    vertical-align: middle;
+  }
+</style>
+<div id="select-tree">
+<form id="select-tree-form">
+  <ul>
+    <li>
+      <label><input type="checkbox" name="selects" value="">&nbsp;One</label>
+    </li>
+    <li>
+      <label><input type="checkbox" name="selects" value="">&nbsp;Two</label>
+      <ul>
+        <li><label><input type="checkbox" name="selects" value="">&nbsp;Two-1</label></li>
+        <li><label><input type="checkbox" name="selects" value="">&nbsp;Two-2</label></li>
+        <li><label><input type="checkbox" name="selects" value="">&nbsp;Two-3</label>
+          <ul>
+            <li><label><input type="checkbox" name="selects" value="">&nbsp;Two-3-1</label></li>
+            <li><label><input type="checkbox" name="selects" value="">&nbsp;Two-3-2</label></li>
+          </ul>
+        </li>
+        <li><label><input type="checkbox" name="selects" value="">&nbsp;Two-4</label></li>
+        <li><label><input type="checkbox" name="selects" value="">&nbsp;Two-5</label></li>
+      </ul>
+    </li>
+    <li>
+      <label><input type="checkbox" name="selects" value="">&nbsp;Tree</label>
+    </li>
+    <li>
+      <label><input type="checkbox" name="selects" value="">&nbsp;Four</label>
+    </li>
+    <li>
+      <label><input type="checkbox" name="selects" value="">&nbsp;Five</label>
+    </li>
+  </ul>
+  
+  
+    
+  
+</form>
+</div>
+
+<script>
+  $('#select-tree').find('label').click(function(){
+    var checked = $(this).children('input[type="checkbox"]').prop('checked');
+    if(checked){ //子集权限选中后，父级也一并选中，因为先有父级
+      $(this).parentsUntil('#select-tree-form > ul').find('ul').prev().children().prop('checked', true);
+    }
+  });
+</script>

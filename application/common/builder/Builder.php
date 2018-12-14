@@ -11,7 +11,7 @@ class Builder extends Controller
     if (empty($type)) {
         throw new \Exception('未指定构建器！');
     } else {
-        $type = ucfirst(strtolower($type));
+        $type = ucfirst($type);
     }
     $builder = 'app\\common\builder\\' . $type;
     if (!class_exists($builder)) {

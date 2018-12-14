@@ -4,13 +4,12 @@ namespace app\common\builder;
 /**
 * 确认框构建器
 */
-class Confirm extends Builder
+class SelectTree extends Builder
 {
-  protected $template = APP_PATH . "common/view/builder/confirm.html";
+  protected $template = APP_PATH . "common/view/builder/selectTree.html";
   protected $templateData = [
     'title'      => '操作', //操作标题
     'id'         => '', //数据id
-    'extendsParam'    => '', //额外参数
     'confirmUrl' => '', //后台地址，默认为空表示为控制器当前url地址
   ];
 
@@ -36,19 +35,6 @@ class Confirm extends Builder
     return $this;
   }
 
-  /**
-   * 额外参数，有时会有多个其它参数的需求
-   * @param  int $id    主键值
-   * @return this
-   */
-  public function extendsParam($params)
-  {
-    if(is_array($params)){
-      $params = json_encode($params);
-    }
-    $this->templateData['extendsParam'] = $params;
-    return $this;
-  }
 
    /**
    * 加载视图

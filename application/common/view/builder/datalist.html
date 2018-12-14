@@ -1,7 +1,6 @@
 <!-- datepicker -->
 <{if $datePicker || $datePickers}>
 <link rel="stylesheet" href="__DATEPICKER__/datepicker.css" crossorigin="anonymous">
-<script src="__DATEPICKER__/moment.min.js" crossorigin="anonymous"></script>
 <script src="__DATEPICKER__/datepicker.all.min.js" crossorigin="anonymous"></script>
 <{/if}>
 <h5 class="table-list-title text-info">&nbsp;&nbsp;<{$title}></h5>
@@ -78,12 +77,12 @@ $(function(){
     }
     if(formatter == 'datetime'){
       column.formatter = function(value, row, index){ //时间截转换器（YYYY-mm-dd HH:ii:ss）
-        return moment(value*1000).format('YYYY-MM-DD HH:mm:ss');
+        return moment(value).format('YYYY-MM-DD HH:mm:ss');
       }
     }
     if(formatter == 'date'){
       column.formatter = function(value, row, index){ //时间截转换器（YYYY-mm-dd HH:ii:ss）
-        return moment(value*1000).format('YYYY-MM-DD');
+        return moment(value).format('YYYY-MM-DD');
       }
     }
     columns[i] = column;
