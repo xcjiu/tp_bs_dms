@@ -37,14 +37,13 @@ class Login extends Controller
 	}
 
 	/**
-     * 退出登录
-     * @return 跳转至登录界面
-     */
-    public function logout(){
-        LoginLogic::clearSession();
-        LoginLogic::clearCookie();
-        $this->redirect('admin/login/index?top=true');
-    }
+   * 退出登录
+   * @return 跳转至登录界面
+   */
+  public function logout(){
+    LoginLogic::logout();
+    $this->redirect('admin/login/index?top=true');
+  }
 
   
 }

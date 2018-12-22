@@ -44,7 +44,7 @@ class Datalist extends Builder
    */
   public function actionBtn($title, $url, $color='btn-info', $modalWidth='')
   {
-    if( !in_array($url, Session::get('userAuths')) ){ //确认权限
+    if( in_array($url, Session::get('userAuths')) ){ //确认权限
       $this->templateData['actionBtn'][] = ['title'=>$title, 'url'=>$url, 'color'=>$color, 'modalWidth'=>$modalWidth];
     }
     return $this;

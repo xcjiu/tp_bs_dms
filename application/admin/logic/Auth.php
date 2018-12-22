@@ -55,7 +55,7 @@ class Auth
     if(!$data['title'] || !$data['link']){
       return '标题或链接为必填字段！';
     }
-    if(AuthRule::where('link', $data['link'])->find()){
+    if(AuthRule::where('link', $data['link'])->where('title', $data['title'])->find()){
       return '该权限已存在！';
     }
     if( (new AuthRule)->allowField(true)->save($data) ){
@@ -66,7 +66,7 @@ class Auth
 
   /**
    * 权限编辑
-   * @param  int $id   主键id
+   * @param  int $auth   要操作的数据对象
    * @param  array $data 要编辑的字段值
    * @return string | bool
    */
@@ -75,15 +75,21 @@ class Auth
     if(!$data['title'] || !$data['link']){
       return '标题或链接为必填字段！';
     }
+    $auth = AuthRule::get($id);
+    $editAuth = AuthRule::where('title', $data['title'])->where('link', $data['link'])->find();
+    if($editAuth && $editAuth->id != $auth->id){
+      return '该权限已存在！';
+    }
     foreach ($data as $key => $value) {
-      if($value === ''){
+      if($value != ''){
+        $auth->$key = $value;
         unset($data[$key]);
       }
     }
-    if( (new AuthRule)->allowField(true)->save($data, ['id'=>$id]) ){
+    if( $auth->save() ){
       return true;
     }
-    return '编辑失败！';
+    return '无更新！';
   }
 
   /**
@@ -114,6 +120,52 @@ class Auth
       $total = AuthRole::count();
     }
     return ['total'=>$total,'rows'=>$rows]; 
+  }
+
+  /**
+   * 角色新增
+   * @param array $params 接收的参数
+   * @return  成功返回true 否则返回错误信息
+   */
+  public static function addRole(array $params)
+  {
+    $name = $params['name'];
+    $status = $params['status'];
+    if(!$name){
+      return '请填写角色名称！';
+    }
+    if(AuthRole::where('name', $name)->find()){
+      return '该角色已经存在！';
+    }
+    if( AuthRole::create(['name'=>$name, 'status'=>$status, 'description'=>$params['description']]) ){
+      return true;
+    }
+    return '新增失败！';
+  }
+
+  /**
+   * 角色编辑
+   * @param  int $id   主键ID
+   * @param  array $data 要编辑的字段值
+   * @return string | bool
+   */
+  public static function editRole($id, $data)
+  {
+    if(!$data['name']){
+      return '请填写角色名称！';
+    }
+    $role = AuthRole::get($id);
+
+    if( ($role->name != $data['name']) && AuthRole::get(['name'=>$data['name']]) ){
+      return '该角色已存在！';
+    }
+    $role->name = $data['name'];
+    $role->status = (int)$data['status'];
+    $role->description = $data['description'];
+    if( $role->save() ){
+      return true;
+    }
+    return '无更新！';
   }
 
   /**
@@ -167,7 +219,7 @@ class Auth
   public static function userRole($uid)
   {
     $group = AuthAssignment::get(['user_id'=>$uid]);
-    return $group ? $group->role : false;
+    return $group ? AuthRole::get($group->role_id) : false;
   }
 
   /**

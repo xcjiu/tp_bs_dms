@@ -35,7 +35,7 @@ class Index extends Base
   //首页
   public function home()
   {
-    return 'home';
+    return $this->fetch('home');
   }
 
   //锁屏或解屏操作

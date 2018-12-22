@@ -156,12 +156,12 @@ class Form extends Builder
    * 文本框
    * @param  string $name    name属性
    * @param  string $title   标题说明
-   * @param  boolean $require 是否必须
+   * @param  boolean $required 是否必须
    * @return this
    */
-  public function textarea($name, $title, $require=false)
+  public function textarea($name, $title, $default='', $required=false)
   {
-    $this->templateData['textareas'][] = ['title'=>$title, 'name'=>$name, 'required'=>$required];
+    $this->templateData['textareas'][] = ['title'=>$title, 'name'=>$name, 'default'=>$default, 'required'=>$required];
     return $this;
   }
 

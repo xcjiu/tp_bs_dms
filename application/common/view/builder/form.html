@@ -3,7 +3,7 @@
 <!--form-->
 <form id="builder-form" style="font-size: 18px;">
   <{foreach $inputs as $input}>
-  <div class="form-group">
+  <div class="form-group <{$input.title==''?'hide':''}>">
     <label class="text-primary pl-1"><{$input.title}></label>
     <input type="<{$input.type}>" class="form-control" name="<{$input.name}>" placeholder="<{$input.placeholder}>" value="<{$input.default}>" <{$input.required?='required'}> <{$input.readOnly?=' readonly'}>> 
   </div>
@@ -57,7 +57,7 @@
   <{foreach $textareas as $textarea}>
   <div class="form-group">
     <label class="text-primary pl-1"><{$textarea.title}></label>
-    <textarea type="textarea" class="form-control-file" name="<{$textarea.name}>" <{$textarea.required?='required'}>></textarea>
+    <textarea type="textarea" class="form-control-file" name="<{$textarea.name}>" <{$textarea.required?='required'}>> <{$textarea.default}> </textarea>
   </div>
   <{/foreach}>
 

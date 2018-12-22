@@ -248,7 +248,7 @@ function open_page(url, el){
     return false;
   }
   var title = $(el).html();
-  var openTab = $('#main-tab').find('[open-url="'+url+'"]');
+  var openTab = $('#main-tab').find('a[open-url="'+url+'"]');
   if(openTab.length > 0){ //标签已存在  
     $('#main-tab').find('a').removeClass('active show');
     openTab.addClass('active show');
@@ -271,6 +271,10 @@ function open_main_content(url)
     data: {}, 
     success: function(data, status, xhr){ //ajax异步请求内容页面
       if(status==='success'){
+        if(data.code==0){
+          Alert(data.msg, 'alert-danger');
+          topLogin(data.url);
+        }
         var html = '<div class="tab-pane fade active show" role="tabpanel" aria-labelledby="contact-tab">'+data+'</div>';
         $('#main-content').html(html);
       }
@@ -432,7 +436,7 @@ function Alert(msg, bgcolor='alert-danger', timeout=3000)
   alertBox.removeClass('hide');
   alertBox.children('span').html(msg);
   alertBox.addClass('show ' + bgcolor);
-  setTimeout("$('.alert').removeClass('show " + bgcolor + "').addClass('hide')", timeout);
+  setTimeout("$('.alert').removeClass('" + bgcolor + "').addClass('hide')", timeout);
 }
 
 //模态内容加载器
@@ -443,6 +447,7 @@ function actionModal(url, title, widthClass='')
   $.get(url, function(data, status, xhr){
     if(data.code == 0){
       Alert(data.msg, 'alert-danger');
+      topLogin(data.url);
       return false;
     }    
     $('#action-modal').modal('show');
@@ -458,8 +463,8 @@ function actionModal(url, title, widthClass='')
 //当用户session过期或被禁用时，需要直接跳转至登录页面重新登入
 function topLogin(url)
 {
-  if(url == 'admin/login/index?top=true'){ //跳转至登录界面
-    top.location.href = domain + 'admin/login/index';
+  if(url.indexOf('admin/login/index') > -1){ //跳转至登录界面
+    setTimeout("top.location.href = domain + 'admin/login/index?/top=true'", 2500);
     return false;
   }
 }

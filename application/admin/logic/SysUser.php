@@ -1,6 +1,8 @@
 <?php
 namespace app\admin\logic;
 use app\admin\model\SysUser as UserModel;
+use app\admin\model\AuthAssignment;
+use app\admin\model\AuthRole;
 
 /**
 * 
@@ -29,11 +31,20 @@ class SysUser
       }
     }
     if($condition){
-      $rows = UserModel::where($condition)->field('password,token',true)->limit($offset, $limit)->select();
+      $rows = UserModel::field('password,token',true)->limit($offset, $limit)->select();
       $total = UserModel::where($condition)->count();
     }else{
       $rows = UserModel::field('password,token',true)->limit($offset, $limit)->select();
       $total = UserModel::count();
+    }
+    if($rows){
+      $uids = array_column($rows, 'id');
+      $role_ids = AuthAssignment::column('role_id', 'user_id');
+      $roles = AuthRole::where('status', 1)->column('name', 'id');
+      foreach ($rows as &$value) {
+        $role_id = isset($role_ids[$value['id']]) ? $role_ids[$value['id']] : 0;
+        $value['role'] = $role_id ? $roles[$role_id] : '还没有分配角色';
+      }
     }
     return ['total'=>$total,'rows'=>$rows]; 
   }
@@ -59,7 +70,10 @@ class SysUser
     }
     $password = password_hash($password, PASSWORD_DEFAULT);
     $status = (int)$data['status'];
-    if( (new UserModel())->allowField(true)->save($data) ){
+    $role_id = $data['role_id'];
+    unset($data['role_id']);
+    $res = UserModel::create($data);
+    if( $res && AuthAssignment::create(['user_id'=>$res->id, 'role_id'=>$role_id]) ){
       return true;
     }
     return '新增失败！';
@@ -82,19 +96,22 @@ class SysUser
       return '请输入正确的手机号码！';
     }
     if(!empty($data['password'])){
-      $data['password'] = password_hash($password, PASSWORD_DEFAULT);
+      $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
     }
-    $data['status'] = int($data['status']);
+    $data['status'] = (int)($data['status']);
+    $role_id = $data['role_id'];
+    unset($data['role_id']);
     foreach ($data as $key => $value) {
       if($value != ''){
         $user->$key = $value;
       }
     }
-    if($user->save()){
+    if($user->save() || $user->assignment->save(['role_id' => $role_id])){
       return true;
     }
     return '编辑失败！';
   }
+
 
 
 

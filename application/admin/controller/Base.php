@@ -22,6 +22,9 @@ class Base extends Controller
 		if(!$user){ 
       $this->redirect('admin/login/index?top=true');
     }
+    if($user === 119){ //在不允许多处登录时可能出现这个值，配置参数login_more=>false
+      $this->error('您的账号在别处登录！请及时修改密码或联系管理员', 'admin/login/index?top=true');
+    }
     $this->uid = $user->id;
     $lockScreen = Session::get('lockScreen'. $this->uid)===true ? '' : 'hide';
     $this->assign('lockScreen', $lockScreen); //是否锁屏状态
@@ -52,6 +55,25 @@ protected function checkController()
   if(!is_file(APP_PATH . $module . DS . $controller)){
     return '<h1 style="text-align:center;color:red;padding:30px;">'. $controller. ' 控制器不存在！</h1>' ;
   }
+}
+
+/**
+ * 获取IP地址
+ * @return [type] [description]
+ */
+protected function get_client_ip() {
+  if(getenv('HTTP_CLIENT_IP') && strcasecmp(getenv('HTTP_CLIENT_IP'), 'unknown')) {
+      $ip = getenv('HTTP_CLIENT_IP');
+  } elseif(getenv('HTTP_X_FORWARDED_FOR') && strcasecmp(getenv('HTTP_X_FORWARDED_FOR'), 'unknown')) {
+      $ip = getenv('HTTP_X_FORWARDED_FOR');
+  } elseif(getenv('REMOTE_ADDR') && strcasecmp(getenv('REMOTE_ADDR'), 'unknown')) {
+      $ip = getenv('REMOTE_ADDR');
+  } elseif(isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] && strcasecmp($_SERVER['REMOTE_ADDR'], 'unknown')) {
+      $ip = $_SERVER['REMOTE_ADDR'];
+  } else {
+      $ip = '0.0.0.0';
+  }
+  return preg_match('/[\d\.]{7,15}/', $ip, $matches) ? $matches[0] : '';
 }
 
 

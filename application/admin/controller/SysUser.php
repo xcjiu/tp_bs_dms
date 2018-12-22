@@ -3,6 +3,7 @@ namespace app\admin\controller;
 use think\Db;
 use app\admin\model\SysUser as UserModel;
 use app\admin\logic\SysUser as UserLogic;
+use app\admin\model\AuthRole;
 /**
 * 
 */
@@ -26,6 +27,7 @@ class SysUser extends Base
     ->searchInput('username', '用户名')
     ->column('id', '用户ID')
     ->column('username', '用户名')
+    ->column('role', '角色')
     ->column('email', '邮箱')
     ->column('phone', '电话')
     ->column('status', '状态', [1=>'正常', 0=>'禁用', 2=>'待审核'])
@@ -51,13 +53,14 @@ class SysUser extends Base
         $this->error($result);
       }
     }
-      
+    $role = AuthRole::where('status', 1)->column('name', 'id');
     return builder('form')
       ->input('username', '用户名（必须）')
       ->input('password', '密码（必须）', '', '输入密码', 'password')
       ->input('email', '电子邮箱', '', '请输入', 'text', false)
       ->input('phone', '手机号码', '', '请输入', 'text', false)
       ->select('status', '状态', ['1'=>'正常', '2'=>'待审核', '0'=>'禁用'], '1')
+      ->select('role_id', '角色', $role, 1)
       ->method('POST')
       ->fetch();
   }
@@ -83,12 +86,15 @@ class SysUser extends Base
         $this->error($result);
       }
     }
-      
+    $role = AuthRole::where('status', 1)->column('name', 'id');
+    $role_id = $user->assignment->role_id;
     return builder('form')
     ->input('password', '密码', '', '留空表示不修改密码', 'password', false)
-    ->input('email', '电子邮箱', $user->email)
-    ->input('phone', '手机号码', $user->phone)
+    ->input('email', '电子邮箱', $user->email, '请输入', 'text', false)
+    ->input('phone', '手机号码', $user->phone, '请输入', 'text', false)
+    ->input('id', '', $id, '', 'hidden', false)
     ->select('status', '状态', ['1'=>'正常', '2'=>'待审核', '0'=>'禁用'], $user->status)
+    ->select('role_id', '角色', $role, $role_id)
     ->method('POST')
     ->fetch();
   }
