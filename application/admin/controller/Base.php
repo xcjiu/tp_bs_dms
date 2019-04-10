@@ -4,6 +4,8 @@ use think\Controller;
 use think\Session;
 use app\admin\logic\Auth as AuthLogic;
 use app\admin\logic\Login;
+use app\admin\model\SysOpLog;
+use app\admin\model\AuthRule;
 
 /**
 * 后台控制器公共类
@@ -77,7 +79,30 @@ protected function get_client_ip() {
 }
 
 
-    
+
+/**
+ * 操作日志，根据需要做日志记录
+ * @param  string $remark 备注信息
+ */
+protected function action_op_log($remark='')
+{
+  $actionAuths = Session::get('userAuths');
+  $actionAuths = $actionAuths ?: array_column(AuthLogic::auths($this->uid), 'link');
+  $link = $this->request->path();
+  if(in_array($link, $actionAuths)){ //具体操作行为做好日志记录
+    $title = AuthRule::where('link', $link)->where('type', 2)->value('title');
+    $op_title = $title ?: '无标题';
+    SysOpLog::create(['user_id'=>$this->uid, 'op_link'=>$link, 'op_title'=>$op_title, 'remark'=>$remark, 'ip'=>$this->get_client_ip()]);
+  }
 }
 
+//导出全部数据列表下载文件
+public function export()
+  {
+    $excel = unserialize(Session::pull('excel-export'));
+    $excel->fileload();
+    return ture;
+  }
 
+    
+}

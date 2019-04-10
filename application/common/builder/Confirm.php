@@ -1,15 +1,20 @@
 <?php
 namespace app\common\builder;
+// +-----------------------------------------------------
+// | 确认框构建器
+// +-----------------------------------------------------
+// | author: xcjiu
+// +-----------------------------------------------------
+// | github: https://github.com/xcjiu/tp_bs_dms
+// +-----------------------------------------------------
 
-/**
-* 确认框构建器
-*/
 class Confirm extends Builder
 {
   protected $template = APP_PATH . "common/view/builder/confirm.html";
   protected $templateData = [
     'title'      => '操作', //操作标题
     'id'         => '', //数据id
+    'content'    => '', //文本内容，用来说明
     'extendsParam'    => '', //额外参数
     'confirmUrl' => '', //后台地址，默认为空表示为控制器当前url地址
   ];
@@ -22,6 +27,17 @@ class Confirm extends Builder
   public function title($title='')
   {
     $this->templateData['title'] = $title;
+    return $this;
+  }
+
+  /**
+   * 文本说明
+   * @param  string $content 说明文字
+   * @return this
+   */
+  public function content($content='')
+  {
+    $this->templateData['content'] = $content;
     return $this;
   }
 

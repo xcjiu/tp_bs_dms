@@ -11,8 +11,8 @@
         <ul class="navbar-nav mr-auto" id="module">
         <{notempty name="topAuth"}>
           <{foreach $topAuth as $module}>
-          <li class="nav-item <{if $module['title']=='首页'}>active nav-chose<{/if}>" onclick="module_click(this)">
-            <a class="nav-link text-white pt-0 pb-0 btn-lg" href="javascript:void(0)" ><{$module['title']}></a>
+          <li class="nav-item <{if $module['title']=='首页'}>active nav-chose<{/if}>" onclick="module_click(this, <{$module.id}>)">
+            <a class="nav-link text-white pt-0 pb-0 btn-lg" href="javascript:void(0)"><{$module['title']}></a>
           </li>
           <{/foreach}>
         <{/notempty}>

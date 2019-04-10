@@ -3,6 +3,8 @@ namespace app\admin\logic;
 use app\admin\model\SysUser as UserModel;
 use app\admin\model\AuthAssignment;
 use app\admin\model\AuthRole;
+use app\admin\model\SysUserLog;
+use app\admin\model\SysOpLog;
 
 /**
 * 
@@ -31,7 +33,7 @@ class SysUser
       }
     }
     if($condition){
-      $rows = UserModel::field('password,token',true)->limit($offset, $limit)->select();
+      $rows = UserModel::where($condition)->field('password,token',true)->limit($offset, $limit)->select();
       $total = UserModel::where($condition)->count();
     }else{
       $rows = UserModel::field('password,token',true)->limit($offset, $limit)->select();
@@ -43,7 +45,7 @@ class SysUser
       $roles = AuthRole::where('status', 1)->column('name', 'id');
       foreach ($rows as &$value) {
         $role_id = isset($role_ids[$value['id']]) ? $role_ids[$value['id']] : 0;
-        $value['role'] = $role_id ? $roles[$role_id] : '还没有分配角色';
+        $value['role'] = $role_id ? (isset($roles[$role_id]) ? $roles[$role_id] : '') : '';
       }
     }
     return ['total'=>$total,'rows'=>$rows]; 
@@ -52,6 +54,7 @@ class SysUser
   /**
    * 添加用户
    * @param array $data 接收到的数据
+   * @return  int | string 成功返回新增的用户ID,否则返回错误信息
    */
   public static function add($data)
   {
@@ -72,9 +75,11 @@ class SysUser
     $status = (int)$data['status'];
     $role_id = $data['role_id'];
     unset($data['role_id']);
+    $data['channel1'] = implode(',', $data['channel1']);
+    $data['channel2'] = implode(',', $data['channel2']);
     $res = UserModel::create($data);
     if( $res && AuthAssignment::create(['user_id'=>$res->id, 'role_id'=>$role_id]) ){
-      return true;
+      return $res->id;
     }
     return '新增失败！';
   }
@@ -106,13 +111,87 @@ class SysUser
         $user->$key = $value;
       }
     }
+
+    $user->channel1 = empty($data['channel1']) ? '' : implode(',', $data['channel1']);
+    $user->channel2 = empty($data['channel2']) ? '' : implode(',', $data['channel2']);
     if($user->save() || $user->assignment->save(['role_id' => $role_id])){
       return true;
     }
     return '编辑失败！';
   }
 
+  //后台用户登录日志
+  public static function getLogRows($params)
+  {
+    $condition = [];
+    if(!empty($params)){
+      $offset = $params['offset'] ?: 0;
+      $limit = $params['limit'] ?: 15;
+      $id = $params['user_id'];
+      $username = $params['username'];
+      $start_time = strtotime($params['start_time']);
+      $end_time = strtotime($params['end_time']) + 86399;
+      if($id){
+        $condition['user_id'] = $id;
+      }
+      if($username){
+        $condition['username'] = $username;
+      }
+      if($start_time && $end_time){
+        $condition['create_time'] = ['between', [$start_time, $end_time]];
+      }
+    }
+    if($condition){
+      $rows = SysUserLog::with('user')->where($condition)->limit($offset, $limit)->select();
+      $total = SysUserLog::with('user')->where($condition)->count();
+    }else{
+      $rows = SysUserLog::with('user')->limit($offset, $limit)->select();
+      $total = SysUserLog::count();
+    }
+    if($rows){
+      foreach ($rows as &$value) {
+        $value['username'] = $value['user']['username'];
+      }
+    }
+    return ['total'=>$total, 'rows'=>$rows];
+  }
 
+
+  //后台用户操作日志
+  public static function getOpLogRows($params)
+  {
+    $condition = [];
+    if(!empty($params)){
+      $offset = $params['offset'] ?: 0;
+      $limit = $params['limit'] ?: 15;
+      $id = $params['user_id'];
+      //$username = $params['username'];
+      $start_time = strtotime($params['start_time']);
+      $end_time = strtotime($params['end_time']) + 86399;
+      if($id){
+        $condition['user_id'] = $id;
+      }
+      /*if($username){
+        $condition['username'] = $username;
+      }*/
+      if($start_time && $end_time){
+        $condition['create_time'] = ['between', [$start_time, $end_time]];
+      }
+    }
+    if($condition){
+      $rows = SysOpLog::with('user')->where($condition)->limit($offset, $limit)->select();
+      $total = SysOpLog::with('user')->where($condition)->count();
+    }else{
+      $rows = SysOpLog::with('user')->limit($offset, $limit)->select();
+      $total = SysOpLog::count();
+    }
+    if($rows){
+      foreach ($rows as &$value) {
+        $value['username'] = $value['user']['username'];
+      }
+    }
+    return ['total'=>$total, 'rows'=>$rows];
+  }
 
 
 }

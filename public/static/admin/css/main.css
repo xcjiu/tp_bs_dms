@@ -87,6 +87,7 @@
   overflow-y: auto;
 }
 #menu-title {
+  list-style: none;
   border-bottom: 1px solid #ddd;
 }
 #menu-title > a {

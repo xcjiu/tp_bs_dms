@@ -60,7 +60,8 @@ class Auth extends Base
     $postData = $this->request->post();
     if($this->request->isAjax() && $postData){   
       $res = AuthLogic::addAuth($postData);
-      if($res === true){
+      if($res === true){          
+        $this->action_op_log('新增权限：' . json_encode($postData)); //操作日志
         $this->success('新增成功！', 'index');
       }else{
         $this->error($res);
@@ -92,6 +93,7 @@ class Auth extends Base
     }
     if($confirm){ //确认过后再操作
       if(AuthRule::destroy($id)){
+        $this->action_op_log('权限删除ID：' . $id); //操作日志
         $this->success('删除成功！');
       }else{
         $this->error('操作失败！');
@@ -114,6 +116,7 @@ class Auth extends Base
     if( $params && $this->request->isAjax() ){   
       $res = AuthLogic::editAuth($id, $params);
       if($res === true){
+        $this->action_op_log("权限编辑：id: $id; " . json_encode($params)); //操作日志
         $this->success('编辑成功！', 'index');
       }else{
         $this->error($res);
@@ -152,6 +155,7 @@ class Auth extends Base
       if($confirm){ //确认过后再操作
         $auth->status = $auth->status ? 0 : 1;
         if($auth->save()){
+          $this->action_op_log("权限".$title." id: $id"); //操作日志
           $this->success('操作成功！');
         }
         $this->error('操作失败！');
@@ -180,7 +184,7 @@ class Auth extends Base
     ->searchInput('name', '角色名称')
     ->column('id', '角色ID')
     ->column('name', '角色名称')
-    ->column('auth_ids', '拥有的权限id组')
+    //->column('auth_ids', '拥有的权限id组')
     ->column('status', '状态', [0=>'禁用', 1=>'启用'])
     ->column('description', '说明')
     ->column('create_time', '创建时间', 'datetime')
@@ -200,6 +204,7 @@ class Auth extends Base
     if($params && $this->request->isAjax()){
       $result = AuthLogic::addRole($params);
       if( $result === true ){
+        $this->action_op_log("角色新增：" . json_encode($params)); //操作日志
         $this->success('新增成功！');
       }else{
         $this->error($result);
@@ -224,6 +229,7 @@ class Auth extends Base
     if($params && $this->request->isAjax()){
       $result = AuthLogic::editRole($id, $params);
       if( $result === true ){
+        $this->action_op_log("角色编辑：" . json_encode($params)); //操作日志
         $this->success('编辑成功！');
       }else{
         $this->error($result);
@@ -257,6 +263,7 @@ class Auth extends Base
       if($confirm){ //确认过后再操作
         $role->status = $role->status ? 0 : 1;
         if($role->save()){
+          $this->action_op_log("角色" . $title . " id: $id"); //操作日志
           $this->success('操作成功！');
         }
         $this->error('操作失败！');
@@ -281,6 +288,7 @@ class Auth extends Base
     }
     if($confirm){ //确认过后再操作
       if(AuthRole::destroy($id)){
+        $this->action_op_log("角色删除：id: $id"); //操作日志
         $this->success('删除成功！');
       }else{
         $this->error('操作失败！');
@@ -319,6 +327,7 @@ class Auth extends Base
           }
         }
         if($authRole->save()){
+          $this->action_op_log("按角色分配权限：id: $id; authIds: " . (string)$auth_id); //操作日志
           $this->success('操作成功！');
         }
       }
@@ -362,7 +371,8 @@ class Auth extends Base
    */
   public function roleAssignment()
   {
-    if($this->request->isAjax() && $this->request->post()){
+    $postData = $this->request->post();
+    if($this->request->isAjax() && $postData){
       $role_id = (int)$this->request->post('role_id', 0);
       if(empty($role_id)){
         $this->error('请选择角色');
@@ -374,6 +384,7 @@ class Auth extends Base
       $role = AuthRole::get($role_id);
       $role->auth_ids = $checked;
       if($role->save()){
+        $this->action_op_log("按单个角色分配权限：" . json_encode($postData)); //操作日志
         $this->success('操作成功！','authAssignment');
       }
       $this->error('操作失败！');

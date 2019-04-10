@@ -5,7 +5,7 @@ use app\admin\model\SysUser as UserModel;
 use app\admin\logic\SysUser as UserLogic;
 use app\admin\model\AuthRole;
 /**
-* 
+* 后台用户管理
 */
 class SysUser extends Base
 {
@@ -28,6 +28,8 @@ class SysUser extends Base
     ->column('id', '用户ID')
     ->column('username', '用户名')
     ->column('role', '角色')
+    ->column('channel1', '绑定一级渠道')
+    ->column('channel2', '绑定二级渠道')
     ->column('email', '邮箱')
     ->column('phone', '电话')
     ->column('status', '状态', [1=>'正常', 0=>'禁用', 2=>'待审核'])
@@ -47,7 +49,8 @@ class SysUser extends Base
     $data = $this->request->post();
     if($data && $this->request->isAjax()){
       $result = UserLogic::add($data); 
-      if($result === true){
+      if( (int)$result > 0 ){
+        $this->action_op_log("新增用户ID: " .$result);//操作日志
         $this->success('新增成功！','index');
       }else{
         $this->error($result);
@@ -55,14 +58,14 @@ class SysUser extends Base
     }
     $role = AuthRole::where('status', 1)->column('name', 'id');
     return builder('form')
-      ->input('username', '用户名（必须）')
-      ->input('password', '密码（必须）', '', '输入密码', 'password')
-      ->input('email', '电子邮箱', '', '请输入', 'text', false)
-      ->input('phone', '手机号码', '', '请输入', 'text', false)
-      ->select('status', '状态', ['1'=>'正常', '2'=>'待审核', '0'=>'禁用'], '1')
-      ->select('role_id', '角色', $role, 1)
-      ->method('POST')
-      ->fetch();
+    ->input('username', '用户名（必须）')
+    ->input('password', '密码（必须）', '', '输入密码', 'password')
+    ->input('email', '电子邮箱', '', '请输入', 'text', false)
+    ->input('phone', '手机号码', '', '请输入', 'text', false)
+    ->select('status', '状态', ['1'=>'正常', '2'=>'待审核', '0'=>'禁用'], '1')
+    ->select('role_id', '角色', $role, 2)
+    ->method('POST')
+    ->fetch();
   }
 
   /**
@@ -77,17 +80,23 @@ class SysUser extends Base
       $this->error('缺少id参数');
     }
     $user = UserModel::get($id);
+    $role = AuthRole::where('status', 1)->column('name', 'id');
+    $role_id = $user->assignment->role_id;
+    $roleName = $role[$role_id];
+    if(!$user->username==='dmsadmin' && $roleName==='超级管理员'){
+      $this->error('您无权操作！');
+      return false;
+    }
     $data = $this->request->post();
     if($data){   
       $result = UserLogic::edit($user, $data);
       if($result === true){
+        $this->action_op_log("编辑用户ID: " .$id);//操作日志
         $this->success('编辑成功！', 'index');
       }else{
         $this->error($result);
       }
     }
-    $role = AuthRole::where('status', 1)->column('name', 'id');
-    $role_id = $user->assignment->role_id;
     return builder('form')
     ->input('password', '密码', '', '留空表示不修改密码', 'password', false)
     ->input('email', '电子邮箱', $user->email, '请输入', 'text', false)
@@ -113,6 +122,7 @@ class SysUser extends Base
         $user->status = $user->status ? 0 : 1;
         $res = $user->save();
         if($res){
+          $this->action_op_log("禁用用户ID: " .$id);//操作日志
           $this->success('操作成功');
         }else{
           $this->error('操作失败！');
@@ -122,6 +132,29 @@ class SysUser extends Base
     return builder('confirm')
     ->title($title)
     ->id($id)
+    ->fetch();
+  }
+
+  /**
+   * 登录日志
+   * @return [type] [description]
+   */
+  public function loginlog()
+  {
+    $params = $this->request->get();
+    if($params && $this->request->isAjax()){
+      return UserLogic::getLogRows($params); //注意，ajax请求自动转换成json对象，这里不需要进行转换
+    }
+    return builder('datalist')
+    ->searchBtn()
+    ->searchInput('user_id', '输入用户ID')
+    ->searchInput('username', '输入用户名')
+    ->datePickers('', '日志时间')
+    ->column('user_id', '用户ID')
+    ->column('username', '用户名')
+    ->column('type', '登录类型', [1=>'登入', 2=>'退出'])
+    ->column('ip', '操作IP')
+    ->column('create_time', '记录时间')
     ->fetch();
   }
 
@@ -223,6 +256,31 @@ class SysUser extends Base
     return builder('form')
     ->file('portrait', '选择头像文件')
     ->method('POST')
+    ->fetch();
+  }
+
+
+  /**
+   * 操作日志
+   * @return [type] [description]
+   */
+  public function oplog()
+  {
+    $params = $this->request->get();
+    if($params && $this->request->isAjax()){
+      return UserLogic::getOpLogRows($params); //注意，ajax请求自动转换成json对象，这里不需要进行转换
+    }
+    return builder('datalist')
+    ->searchBtn()
+    ->searchInput('user_id', '输入用户ID')
+    //->searchInput('username', '输入用户名')
+    ->datePickers('', '日志时间')
+    ->column('user_id', '用户ID')
+    ->column('username', '用户名')
+    ->column('op_title', '操作名称')
+    ->column('remark', '具体内容')
+    ->column('ip', '操作IP')
+    ->column('create_time', '记录时间')
     ->fetch();
   }
 

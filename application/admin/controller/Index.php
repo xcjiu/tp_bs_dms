@@ -20,8 +20,19 @@ class Index extends Base
     if(!Config::get('auth_module')){
       $auths['topAuth'] = '';
     }
-    $pids = array_unique(array_column($auths['menuAuth'], 'pid'));
-    $auths['menuAuth'] = menu_tree($auths['menuAuth'], 0, $pids);
+    $menus = [];
+    if(Config::get('auth_module') === true){ //显示顶部菜单导航, 按模块显示菜单
+      foreach ($auths['menuAuth'] as $value) {
+        if($value['module'] === 1){ //默认首页模块显示
+          $menus[] = $value;
+        }
+      }
+    }else{ //不要导航则显示所有菜单
+      $menus = $auths['menuAuth'];
+    }
+
+    $pids = array_unique(array_column($menus, 'pid'));
+    $auths['menuAuth'] = menu_tree($menus, 0, $pids);
 
     //权限变量输出
     $this->assign($auths); 
@@ -62,6 +73,26 @@ class Index extends Base
       }
     }
     $this->error('操作有误！');
+  }
+
+  /**
+   * 根据模块来获取菜单栏
+   * @param  integer $module 模块ID
+   * @return [type]          [description]
+   */
+  public function getMenu()
+  {
+    $module = (int)$this->request->param('module');
+    $auths = Auth::auths($this->uid);
+    $menus = [];
+    foreach ($auths['menuAuth'] as $key => $value) {
+      if($value['module'] === $module){ 
+        $menus[] = $value;
+        unset($auths[$key]);
+      }
+    }
+    $pids = array_unique(array_column($menus, 'pid'));
+    return menu_tree($menus, 0, $pids);
   }
 
 

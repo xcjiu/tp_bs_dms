@@ -1,8 +1,10 @@
 <?php
 namespace app\admin\logic;
+use think\Config;
 use app\admin\model\AuthAssignment;
 use app\admin\model\AuthRule;
 use app\admin\model\AuthRole;
+
 
 /**
 * 权限逻辑类

@@ -8,9 +8,9 @@ class Builder extends Controller
 {
   public static function init($type)
   {
-    if (empty($type)) {
+    if(empty($type)) {
         throw new \Exception('未指定构建器！');
-    } else {
+    }else{
         $type = ucfirst($type);
     }
     $builder = 'app\\common\builder\\' . $type;

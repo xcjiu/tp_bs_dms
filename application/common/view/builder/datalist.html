@@ -3,7 +3,8 @@
 <link rel="stylesheet" href="__DATEPICKER__/datepicker.css" crossorigin="anonymous">
 <script src="__DATEPICKER__/datepicker.all.min.js" crossorigin="anonymous"></script>
 <{/if}>
-<h5 class="table-list-title text-info">&nbsp;&nbsp;<{$title}></h5>
+<h5 class="table-list-title text-info">&nbsp;&nbsp;<{$title}><button class="btn btn-outline-info btn-sm pull-right mr-2 excel-all">导出全部(Excel)</button></h5>
+
 <nav class="nav" id="toolbar">
   <!--操作按钮组-->
   <{notempty name="actionBtn"}>
@@ -112,12 +113,19 @@ $(function(){
     })
   }
 
+  var exportType = $('input[name="export-type"]').val();
+
   /*加载数据*/
   $('#data-table').bootstrapTable({
     url: domain + "<{$dataUrl}>",
     queryParams: function(params){ //提交条件参数
       return $('#search-form').serializeArray().concat([{name:'offset', value:params.offset}, {name:'limit', value:params.limit}]);
     },
+    //数据导出
+    showExport: true,
+    exportDataType: 'basic',
+    exportTypes: [ 'csv', 'txt','json', 'doc', 'excel', 'xls', 'pdf', 'png', 'sql', 'xml'],
+
     cache: false, //禁用AJAX数据缓存
     striped: true, //设置为隔行变色效果
     showToggle: true, //显示切换视图按钮
@@ -141,14 +149,19 @@ $(function(){
     columns: columns,
     responseHandler: function(res){
       return {'total': res.total, 'rows': res.rows}
-    }
+    },
   });
 
-$('#data-search').click(function(){
-  $('#data-table').bootstrapTable('refresh');
-});
+  //刷新数据
+  $('#data-search').click(function(){ 
+    $('#data-table').bootstrapTable('refresh');
+  });
 
-/*日期时间选择器*/
+  //数据导出功能
+  $('.fixed-table-toolbar .export > button').html('<i class="fa fa-download"></i>');
+  $('.export > ul li').addClass('text-center');
+
+  /*日期时间选择器*/
   function dateTool(type='single', format='YYYY-MM-DD', min='', max='', shortcut=true, shortcutOptions=[]){
     if(shortcutOptions.length<1){ 
       //默认快捷项，可以在控制器中自定义,注意单选与双选的不同
@@ -173,15 +186,29 @@ $('#data-search').click(function(){
     }
   }
 
-var datePickerObj = <{$datePicker|json_encode}>;
-if('name' in datePickerObj){
-  dateTool('single', datePickerObj.format, datePickerObj.min, datePickerObj.max, datePickerObj.shortcut, datePickerObj.shortcutOptions)
-}
-var datePickersObj = <{$datePickers|json_encode}>;
-if('name' in datePickersObj){
-  dateTool('two', datePickersObj.format, datePickersObj.min, datePickersObj.max, datePickersObj.shortcut, datePickersObj.shortcutOptions)
-}
+  var datePickerObj = <{$datePicker|json_encode}>;
+  if('name' in datePickerObj){
+    dateTool('single', datePickerObj.format, datePickerObj.min, datePickerObj.max, datePickerObj.shortcut, datePickerObj.shortcutOptions)
+  }
+  var datePickersObj = <{$datePickers|json_encode}>;
+  if('name' in datePickersObj){
+    dateTool('two', datePickersObj.format, datePickersObj.min, datePickersObj.max, datePickersObj.shortcut, datePickersObj.shortcutOptions)
+  }
 
-})
+  $('.excel-all').dblclick(function(){ //双击全部导出excel数据
+    var url = domain + "<{$dataUrl}>?excel=true&";
+    url += $('#search-form').serialize();
+    var title = {}; //字段名称
+    for(i in columns){ 
+      title[columns[i]['field']] = columns[i]['title'];
+    }
+    url += '&columns=' + JSON.stringify(title);
+    $.get(url, function(data, status){
+      console.log(data);
+      window.open(domain + "admin/base/export"); //重定向页面打开，否则不能对流数据下载
+    });
+  });
+
+});
 
 </script>

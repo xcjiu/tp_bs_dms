@@ -1,5 +1,8 @@
 <!--confirm-->
 <div id="confirm-box">
+  <{notempty name="content"}>
+    <h6 class="text-center text-warning"><{$content}></h6>
+  <{/notempty}>
   <h3 class="text-center text-danger">确定<{$title}>吗？</h3>
   <br />
   <button class="btn btn-primary pull-left ml-5 pl-3 pr-3">取 消</button>

@@ -2,9 +2,12 @@
 
 /*----------------------header导航栏相关处理-------------------------*/
 //顶部导航菜单点击
-function module_click(e){
+function module_click(e, module){
   $(e).addClass('active nav-chose');
   $(e).siblings().removeClass('active nav-chose');
+  $.get(domain + 'admin/index/getMenu?module=' + module, function(data, status){
+    $('#menu-list').html(data);
+  });
 }
 
 //侧边菜单栏关闭打开动态操作按钮
@@ -290,7 +293,8 @@ function open_main_content(url)
 $(function(){
 
 //菜单焦点样式
-$('#left-menu').find('li.nav-item').hover(function(){
+//$('#left-menu').find('li.nav-item').hover(function(){
+$('#left-menu').on('hover', 'li.nav-item', function(){
     $(this).addClass('active');
     $(this).siblings().not('.menu-chose').removeClass('active');
 }, function(){
@@ -300,7 +304,8 @@ $('#left-menu').find('li.nav-item').hover(function(){
 });
 
 //点击菜单项
-$('#left-menu').find('li.nav-item').click(function(event){ 
+//$('#left-menu').find('li.nav-item').click(function(event){ 
+$('#left-menu').on('click','li.nav-item', function(event){ 
   var ul_item = $(this).children('ul');
   $(this).addClass('active menu-chose');
   $(this).siblings().removeClass('active menu-chose');
@@ -314,6 +319,8 @@ $('#left-menu').find('li.nav-item').click(function(event){
     }
     dropdownIcon.html('<i class="fa '+icon+' pull-right pt-1"></i>');
     ul_item.slideToggle('fast');
+    $(this).siblings().children('a').children('span').removeClass('fa-down');
+    $(this).siblings().children('a').children('span').html('<i class="fa fa-chevron-right pull-right pt-1"></i>');
   }
   $(this).siblings().children('ul').slideUp('fast');
   event.stopPropagation(); //阻止冒泡事件
@@ -444,19 +451,21 @@ function actionModal(url, title, widthClass='')
 {
   topLogin(url);
   url = domain + url;
+  var error = false;
   $.get(url, function(data, status, xhr){
     if(data.code == 0){
       Alert(data.msg, 'alert-danger');
-      topLogin(data.url);
+      $('#action-modal').find('.modal-body').html(data.msg);
       return false;
-    }    
-    $('#action-modal').modal('show');
-    $('#action-modal .modal-title').html(title + '操作');
-    $('#action-modal .modal-dialog').removeClass('modal-lg modal-sm');
-    if(widthClass != ''){ //modal框大小样式 modal-lg modal-sm, 默认中等大小
-      $('#action-modal .modal-dialog').addClass(widthClass);
-    }
-    $('#action-modal').find('.modal-body').html(data);
+    }else{
+      $('#action-modal').modal('show');
+      $('#action-modal .modal-title').html(title + '操作');
+      $('#action-modal .modal-dialog').removeClass('modal-lg modal-sm');
+      if(widthClass != ''){ //modal框大小样式 modal-lg modal-sm, 默认中等大小
+        $('#action-modal .modal-dialog').addClass(widthClass);
+      }
+      $('#action-modal').find('.modal-body').html(data);
+    } 
   });
 }
 

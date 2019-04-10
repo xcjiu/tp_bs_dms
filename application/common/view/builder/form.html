@@ -27,7 +27,7 @@
     <{foreach $checkbox['options'] as $value => $text}>
     <div class="form-check">
       <label class="form-check-label">
-      <input class="form-check-input" type="checkbox" value="<{$value}>" name="<{$checkbox.name}>" <{$checkbox.default==$value?='checked'}>><{$text}>
+      <input class="form-check-input" type="checkbox" value="<{$value}>" name="<{$checkbox.name}>" <{$value|in_array=$checkbox.default?='checked'}>><{$text}>
       </label>
     </div>
     <{/foreach}>

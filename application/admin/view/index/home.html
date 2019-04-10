@@ -1,1 +1,13 @@
-home home home
+<h2 id='divTyping' class="ml-4 p-4">
+   欢迎 <{$sysUser.username}>！<br /><br />
+   北京时间：<span id='current-time'></span>
+</h2>
+<script>
+    function nowTime()
+    {
+        var d = new Date();
+        $('#current-time').html(d.toLocaleTimeString());
+    }
+    nowTime();
+    setInterval(function(){nowTime()}, 1000); //每隔1000毫秒执行一次 nowTime
+</script>

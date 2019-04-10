@@ -133,9 +133,9 @@ class Form extends Builder
    * @param  boolean $required    是否必须，默认true为必须
    * @return this
    */
-  public function checkbox($name, $title, $options=[], $default='', $required=true)
+  public function checkbox($name, $title, $options=[], $default=[], $required=false)
   {
-    $this->templateData['checkboxs'][] = ['title'=>$title, 'name'=>$name, 'options'=>$options, 'default'=>$default, 'required'=>$required];
+    $this->templateData['checkboxs'][] = ['title'=>$title, 'name'=>$name . '[]', 'options'=>$options, 'default'=>$default, 'required'=>$required];
     return $this;
   }
 
@@ -146,7 +146,7 @@ class Form extends Builder
    * @param  boolean $required    是否必须，默认true为必须
    * @return this
    */
-  public function file($name, $title, $required=true)
+  public function file($name, $title, $required=false)
   {
     $this->templateData['files'][] = ['title'=>$title, 'name'=>$name, 'required'=>$required];
     return $this;
