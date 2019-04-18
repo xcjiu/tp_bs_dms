@@ -12,6 +12,7 @@ class Datalist extends Builder
     'title'        => '', //页面标题
     'actionBtn'    => [], //操作按钮组，如新增，禁用等
     'searchBtn'    => false, //查询按钮, 有查询按钮说明有查询条件
+    'conditionBtn'    => [], //条件按钮, 按单个特定条件来查询显示数据或进行排序
     'searchInput'  => [], //条件查询输入框组
     'searchSelect' => [], //条件查询下拉框组
     'datePicker'   => [], //日期时间单选择器
@@ -57,6 +58,19 @@ class Datalist extends Builder
   public function searchBtn()
   {
     $this->templateData['searchBtn'] = true;
+    return $this;
+  }
+
+  /**
+   * 条件按钮
+   * @param  string $title  按钮名称
+   * @param  string $cond 条件值
+   * @param  string $styles  自定义样式
+   * @return this
+   */
+  public function conditionBtn($title, $cond='', $styles='')
+  {
+    $this->templateData['conditionBtn'][] = ['title'=>$title, 'cond'=>$cond, 'styles'=>$styles];
     return $this;
   }
 
@@ -131,10 +145,10 @@ class Datalist extends Builder
 
   /**
    * 设置主键名，默认为id
-   * @param  string $keyName 主键字段名
+   * @param  string $primaryKey 主键字段名
    * @return this
    */
-  public function primaryKey($keyName='id')
+  public function primaryKey($primaryKey='id')
   {
     $this->templateData['primaryKey'] = $primaryKey;
     return $this;
@@ -146,11 +160,12 @@ class Datalist extends Builder
    * @param  [type] $title     字段显示标题
    * @param  string $formatter 内容自定义
    * @param  string $align 内容对齐方式
+   * @param  boolean $ordertable 内容排序功能，默认关闭
    * @return this
    */
-  public function column($field, $title, $formatter='', $align='center')
+  public function column($field, $title, $formatter='', $align='center', $ordertable=false)
   {
-    $this->templateData['columns'][] = ['field'=>$field, 'title'=>$title, 'formatter'=>$formatter, 'align'=>$align];
+    $this->templateData['columns'][] = ['field'=>$field, 'title'=>$title, 'formatter'=>$formatter, 'align'=>$align, 'sortable'=>$ordertable];
     return $this;
   }
 
@@ -161,13 +176,14 @@ class Datalist extends Builder
    * 这会根据数组中的规则来动态展示操作按钮标题
    * @param  string $url   操作方法，即操作url
    * @param  string $color 按钮颜色类，参考bootstrap4的按钮颜色，默认：btn-info
+   * @param  string $modalWidth  模态框大小，可参考bootstrap4的Modal，如:modal-lg modal-sm
    * @param  string $DIYclass 自定义类名，方便查找指定类名的操作项或改变该按钮的样式
    * @return this
    */
-  public function columnBtn($title, $url, $color='btn-info', $DIYclass='')
+  public function columnBtn($title, $url, $color='btn-info', $modalWidth='', $DIYclass='')
   {
     if( in_array($url, Session::get('userAuths')) ){ //确认权限
-      $this->templateData['columnBtn'][] = ['title'=>$title, 'url'=>$url, 'color'=>$color, 'DIYclass'=>$DIYclass];
+      $this->templateData['columnBtn'][] = ['title'=>$title, 'url'=>$url, 'color'=>$color, 'modalWidth'=>$modalWidth, 'DIYclass'=>$DIYclass];
     }
     return $this;
   }

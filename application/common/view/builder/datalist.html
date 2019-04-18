@@ -14,7 +14,7 @@
     <{/foreach}>
   </ul>
   <{/notempty}>
-  <{if $searchBtn}>
+
   &nbsp;&nbsp;
   <!--条件查询表单-->
   <form class="form-inline" id="search-form">
@@ -56,8 +56,20 @@
         <input placeholder="结束日期" name="<{$datePickers.name.end_name}>" class="c-datepicker-data-input <{$datePickers.format=='YYYY-MM-DD'?'only-date':''}>" value="<{$datePickers.default.end_default}>">
       </div>
     <{/notempty}>
+    
+    <!--单条件选择按钮-->
+    <{notempty name="conditionBtn"}>
+      &nbsp;&nbsp;筛选&nbsp;&nbsp;
+      <{foreach $conditionBtn as $condBtn}>
+      <div class="form-group">
+        <input class="form-control form-control-sm btn-info cond-btn" type="button" cond="<{$condBtn.cond}>" value="<{$condBtn.title}>" style="<{$condBtn.styles}>">
+      </div>&nbsp;
+      <{/foreach}>
+      <input type="hidden" name="singlecond" value="">
+    <{/notempty}>    
   </form>
   &nbsp;&nbsp;
+  <{if $searchBtn}>
   <!--搜索按钮-->
   <li class="nav-item" id="data-search"><button class="btn btn-info btn-sm"><i class="fa fa-search"></i></button></li>
   <{/if}>
@@ -95,6 +107,7 @@ $(function(){
     columns.push({
       field: '',
       title: '操作',
+      sortable: true,
       align: 'center',
       formatter: function(value, row, index){
         var html = '';
@@ -106,7 +119,8 @@ $(function(){
             var column = columnBtn[i]['title']['column'];
             btnTitle = columnBtn[i]['title']['title'][row[column]];
           }
-          html += '<button class="btn btn-sm '+columnBtn[i]['color']+' '+columnBtn[i]['DIYclass']+'" data-toggle="modal" data-target="#action-modal" onclick="actionModal(' + url + ",'" + btnTitle + "'" + ')" style="padding: .25rem .25rem;">'+btnTitle+'</button>&nbsp;';
+          modalWidth = columnBtn[i]['modalWidth'];
+          html += '<button class="btn btn-sm '+columnBtn[i]['color']+' '+columnBtn[i]['DIYclass']+'" data-toggle="modal" data-target="#action-modal" onclick="actionModal(' + url + ",'" + btnTitle + "'" + ",'" + modalWidth + "'" + ')" style="padding: .25rem .25rem;">'+btnTitle+'</button>&nbsp;';
         }
         return html;
       }
@@ -119,20 +133,24 @@ $(function(){
   $('#data-table').bootstrapTable({
     url: domain + "<{$dataUrl}>",
     queryParams: function(params){ //提交条件参数
-      return $('#search-form').serializeArray().concat([{name:'offset', value:params.offset}, {name:'limit', value:params.limit}]);
+      //这里可以自定义上传一些参数，合理使用params参数集，可以传递offset, limit, 要排序的表头字段名称和排序名
+      return $('#search-form').serializeArray().concat([{name:'offset', value:params.offset}, {name:'limit', value:params.limit}, {name:'order', value:params.order}, {name:'orderName', value: params.sort}]);
     },
     //数据导出
     showExport: true,
     exportDataType: 'basic',
     exportTypes: [ 'csv', 'txt','json', 'doc', 'excel', 'xls', 'pdf', 'png', 'sql', 'xml'],
-
+    sortable: true,
+    sortOrder: 'desc',
+    sortName: 'order',
+    silentSort: true,
     cache: false, //禁用AJAX数据缓存
     striped: true, //设置为隔行变色效果
     showToggle: true, //显示切换视图按钮
     undefinedText: '---', //当数据为undefined时显示的字符
     pagination: true, //显示分页条
     pageNumber: 1, //首页页码
-    pageSize: 15, //页面数据条数
+    pageSize: 10, //页面数据条数
     pageList: [5, 10, 20, 50, 100], //设置分页下拉选项
     showRefresh: true, //显示刷新按钮
     showColumns: true, //显示字段列下拉框，可选择要显示的字段
@@ -149,11 +167,18 @@ $(function(){
     columns: columns,
     responseHandler: function(res){
       return {'total': res.total, 'rows': res.rows}
-    },
+    }
   });
 
   //刷新数据
   $('#data-search').click(function(){ 
+    $('#data-table').bootstrapTable('refresh');
+  });
+
+  //单条件按钮
+  $('.cond-btn').click(function(){
+    var cond = $(this).attr('cond');
+    $('input[name="singlecond"]').val(cond);
     $('#data-table').bootstrapTable('refresh');
   });
 
@@ -204,7 +229,7 @@ $(function(){
     }
     url += '&columns=' + JSON.stringify(title);
     $.get(url, function(data, status){
-      console.log(data);
+      //console.log(data);
       window.open(domain + "admin/base/export"); //重定向页面打开，否则不能对流数据下载
     });
   });
