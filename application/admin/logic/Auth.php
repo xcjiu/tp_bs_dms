@@ -24,11 +24,17 @@ class Auth
       $limit = $params['limit'] ?: 15;
       unset($params['offset']);
       unset($params['limit']);
-      if(isset($params['_'])){ unset($params['_']); }//这个参数是数据表插件自带的，这里不需要
-      foreach ($params as $key => $value) {
-        if($value != ''){
-          $condition[$key] = $value;
-        }
+      $title = $params['title'];
+      $link = $params['link'];
+      $type = $params['type'];
+      if($title){
+        $condition['title'] = $title;
+      }
+      if($link){
+        $condition['link'] = $link;
+      }
+      if($type){
+        $condition['type'] = $type;
       }
     }
     if($condition){
@@ -107,11 +113,9 @@ class Auth
       $limit = $params['limit'] ?: 15;
       unset($params['offset']);
       unset($params['limit']);
-      if(isset($params['_'])){ unset($params['_']); }//这个参数是数据表插件自带的，这里不需要
-      foreach ($params as $key => $value) {
-        if($value != ''){
-          $condition[$key] = $value;
-        }
+      $name = $params['name'];
+      if($name){
+        $condition['name'] = $name;
       }
     }
     if($condition){

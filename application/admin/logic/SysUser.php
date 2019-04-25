@@ -25,11 +25,13 @@ class SysUser
       $limit = $params['limit'] ?: 15;
       unset($params['offset']);
       unset($params['limit']);
-      if(isset($params['_'])){ unset($params['_']); }//这个参数是数据表插件自带的，这里不需要
-      foreach ($params as $key => $value) {
-        if($value != ''){
-          $condition[$key] = $value;
-        }
+      $id = $params['id'];
+      $username = $params['username'];
+      if((int)$id){
+        $condition['id'] = $id;
+      }
+      if($username){
+        $condition['username'] = $username;
       }
     }
     if($condition){
@@ -58,8 +60,8 @@ class SysUser
    */
   public static function add($data)
   {
-    $username = $data['username'];
-    $password = $data['password'];
+    $username = trim($data['username']);
+    $password = trim($data['password']);
     if(!$username || !$password){
       return '用户名或密码不能为空！';
     }
@@ -71,12 +73,16 @@ class SysUser
     if($phone && !preg_match("/^1[3456789]\d{9}$/", $phone)){
       return '请输入正确的手机号码！';
     }
+    if(UserModel::get(['username'=>$username])){
+      return '该账号已存在！';
+    }
     $password = password_hash($password, PASSWORD_DEFAULT);
     $status = (int)$data['status'];
     $role_id = $data['role_id'];
     unset($data['role_id']);
-    $data['channel1'] = implode(',', $data['channel1']);
-    $data['channel2'] = implode(',', $data['channel2']);
+    $data['portrait'] = 'images/portrait/user3.jpg';
+    $data['token'] = '';
+    $data['password'] = $password;
     $res = UserModel::create($data);
     if( $res && AuthAssignment::create(['user_id'=>$res->id, 'role_id'=>$role_id]) ){
       return $res->id;
@@ -101,7 +107,7 @@ class SysUser
       return '请输入正确的手机号码！';
     }
     if(!empty($data['password'])){
-      $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+      $data['password'] = password_hash(trim($data['password']), PASSWORD_DEFAULT);
     }
     $data['status'] = (int)($data['status']);
     $role_id = $data['role_id'];
@@ -112,8 +118,6 @@ class SysUser
       }
     }
 
-    $user->channel1 = empty($data['channel1']) ? '' : implode(',', $data['channel1']);
-    $user->channel2 = empty($data['channel2']) ? '' : implode(',', $data['channel2']);
     if($user->save() || $user->assignment->save(['role_id' => $role_id])){
       return true;
     }
