@@ -453,9 +453,9 @@ function actionModal(url, title, widthClass='')
   url = domain + url;
   var error = false;
   $.get(url, function(data, status, xhr){
-    if(data.code == 0){
+    if(data.code === 0){
       Alert(data.msg, 'alert-danger');
-      $('#action-modal').find('.modal-body').html(data.msg);
+      topLogin(data.url);
       return false;
     }else{
       $('#action-modal').modal('show');

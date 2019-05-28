@@ -89,13 +89,12 @@ $("#builder-form").submit(function(event){
     contentType: false,
     processData: false,
     success: function(result,status,xhr){
+      $('#action-modal').modal('hide');
       //console.log(data);
       if(result.code == 1){ 
-        $('#action-modal').modal('hide');
         Alert(result.msg, 'alert-success');
         $('#data-table').bootstrapTable('refresh');
       }else{
-        $('#action-modal').modal('hide');
         Alert(result.msg, 'alert-danger');
         return false;
       }
