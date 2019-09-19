@@ -21,6 +21,7 @@ class Datalist extends Builder
     'columns'      => [], //要显示的字段组
     'columnBtn'    => [], //每一条数据的操作项
     'checkbox'     => false, //是否开启多选框
+    'extraJs'   => '', //额外自定义js代码, 格式<script>...</script>
     'dataUrl'      => '', //页面数据加载地址，为空表示为当前控制器加载，如果控制器中代码较多可以指定逻辑方法来加载数据
   ];
 
@@ -213,6 +214,19 @@ class Datalist extends Builder
     $this->templateData['checkbox'] = $check;
     return $this;
   }
+
+
+  /**
+   * 额外自定义js代码
+   * @param  string $str  js代码
+   * @return this
+   */
+  public function extraJs($str='')
+  {
+    $this->templateData['extraJs'] = $str;
+    return $this;
+  }
+
 
   /**
    * 加载视图
