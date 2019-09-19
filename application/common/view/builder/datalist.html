@@ -5,17 +5,18 @@
 <{/if}>
 <h5 class="table-list-title text-info">&nbsp;&nbsp;<{$title}><button class="btn btn-outline-info btn-sm pull-right mr-2 excel-all">导出全部(Excel)</button></h5>
 
-<nav class="nav" id="toolbar">
-  <!--操作按钮组-->
-  <{notempty name="actionBtn"}>
-  <ul class="nav nav-bar">
-    <{foreach $actionBtn as $btn}>
-      <li class="nav-item"><button class="btn <{$btn.color}> btn-sm" data-toggle="modal" data-target="#action-modal" onclick="actionModal('<{$btn.url}>', '<{$btn.title}>', '<{$btn.modalWidth}>')"><{$btn.title}></button></li>&nbsp;&nbsp;
-    <{/foreach}>
-  </ul>
-  <{/notempty}>
+<!--操作按钮组-->
+<{notempty name="actionBtn"}>
+<ul class="nav nav-bar">
+  <{foreach $actionBtn as $btn}>
+    <li class="nav-item"><button class="btn <{$btn.color}> btn-sm" data-toggle="modal" data-target="#action-modal" onclick="actionModal('<{$btn.url}>', '<{$btn.title}>', '<{$btn.modalWidth}>')"><{$btn.title}></button></li>&nbsp;&nbsp;
+  <{/foreach}>
+</ul>
+<{/notempty}>
+<br />
 
-  &nbsp;&nbsp;
+<nav class="nav" id="toolbar">
+  查询条件：&nbsp;&nbsp;
   <!--条件查询表单-->
   <form class="form-inline" id="search-form">
     <{notempty name="searchInput"}>
@@ -80,7 +81,16 @@ $(function(){
   var primaryKey = "<{$primaryKey}>"; //主键，默认是id,如果不是id字段则要在控制器中指定
   var columns = <{$columns|json_encode}>; //要显示的字段
   var checkbox = "<{$checkbox}>";
-  if(checkbox){columns[0].checkbox = true} //是否开启多选框
+  
+  if(checkbox) {//开启复选框
+    columns.unshift({
+      checkbox: true,
+      formatter: function(i, row) {
+        return {checked: false} //默认不要选中
+      }
+    })
+  } 
+
   columns.forEach(function(column, i){
     var formatter = column.formatter;
     if(typeof formatter === 'object'){
@@ -119,7 +129,7 @@ $(function(){
             btnTitle = columnBtn[i]['title']['title'][row[column]];
           }
           modalWidth = columnBtn[i]['modalWidth'];
-          html += '<button class="btn btn-sm '+columnBtn[i]['color']+' '+columnBtn[i]['DIYclass']+'" onclick="actionModal(' + url + ",'" + btnTitle + "'" + ",'" + modalWidth + "'" + ')" style="padding: .25rem .25rem;">'+btnTitle+'</button>&nbsp;';
+          html += '<button class="btn btn-sm '+columnBtn[i]['color']+' '+columnBtn[i]['DIYclass']+'" data-toggle="modal" data-target="#action-modal" onclick="actionModal(' + url + ",'" + btnTitle + "'" + ",'" + modalWidth + "'" + ')" style="padding: .25rem .25rem;">'+btnTitle+'</button>&nbsp;';
         }
         return html;
       }
@@ -153,12 +163,15 @@ $(function(){
     pageList: [5, 10, 20, 50, 100], //设置分页下拉选项
     showRefresh: true, //显示刷新按钮
     showColumns: true, //显示字段列下拉框，可选择要显示的字段
-    uniqueId: primaryKey, //对每一行指定唯一标识符
     paginationPreText: '上一页',
     paginationNextText: '下一页',
     //detailView: true, //是否显示单条数据的详细内容，有一个+号打开内容
-    clickToSelect: true, //点击就选中，开启了选框的情况下
+    clickToSelect: false, //点击就选中，开启了选框的情况下
     checkboxHeader: true, //设置 false 将在列头隐藏全选复选框
+    showSelectTitle: true,
+    idField: primaryKey, //选中的字段名称
+    selectItemName: 'id', //选择框默认input 的name属性值
+    uniqueId: true,
     toolbar: '#toolbar', //自定义的工具条
     //buttonsToolbar: 'buttons-toolbar', //自定义的按钮工具条
     sidePagination:'server',
@@ -236,3 +249,5 @@ $(function(){
 });
 
 </script>
+
+<{$extraJs}>
