@@ -15,7 +15,15 @@
   });
   $('#confirm-box').children('.pull-right').click(function(){
     var extendsParam = "<{$extendsParam}>";
-    var data = {id: "<{$id}>", confirm: true};
+    choseId = "<{$id}>";
+    if(!choseId) { //如果$id为空，说明不是单个id, 要选择多个id操作，用于批量操作
+      choseId = '';
+      choseInputs = $('input[name="id"]:checked');
+      for(var i=0; i<choseInputs.length; i++) {
+        choseId += choseInputs[i].value + ','
+      }
+    }
+    var data = {id: choseId, confirm: true};
     if(extendsParam.length > 0){ //如果有额外参数
       data.extendsParam = extendsParam;
     }
