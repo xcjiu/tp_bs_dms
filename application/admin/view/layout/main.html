@@ -1,0 +1,36 @@
+ <!--tabs bar absolute-->
+ <nav class="bg-light p-0" id="tabs-bar">
+    <!--menu animate-->
+    <button class="btn btn-info menu-btn pull-left border" data-toggle="tooltip" data-placement="bottom" title="收起菜单" onclick="menu_animate(this)"><i class="fa fa-align-justify"></i></button>
+
+    <a class="btn pull-left" id="tab-backward" title="左侧隐藏标签" href="javascript:void(0)" onclick="animate_tabs('backward')">
+      <i class="fa fa-backward"></i>
+    </a>
+    <div class="nav-tab-box h-100">
+      <ul class="nav nav-tabs pull-left h-100" id="main-tab">
+        <li class="nav-item active" id="home-tab">
+        <a class="nav-link p-6 active pull-left content-tab-click" data-toggle="tab" href="javascript:void(0);" role="tab" aria-controls="home" aria-selected="true" open-url="admin/index/home">
+          首页
+        </a>
+        </li>
+      </ul>
+    </div>
+    
+    <a class="btn dropdown-toggle pull-right" href="#" id="navtabsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+    <a class="btn pull-right" id="tab-forward" title="右侧隐藏标签" href="javascript:void(0)" onclick="animate_tabs('forward')">
+      <i class="fa fa-forward"></i>
+    </a>
+    <div class="dropdown-menu" aria-labelledby="navtabsDropdown">
+      <button class="dropdown-item btn text-primary" onclick="close_tabs()">关闭所有</button>
+      <div class="dropdown-divider"></div>
+      <button class="dropdown-item btn text-primary" onclick="stay_current_tab()">只留当前</button>
+    </div>
+  </nav>  
+
+
+<div class="bg-light" id="main">
+  <!--main content-->
+  <div class="container-fluid p-2 pull-left">
+    <div class="tab-content" id="main-content"></div>
+  </div>
+</div>

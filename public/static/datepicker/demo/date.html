@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/datepicker.css">
+</head>
+<body style="height:900px;">
+    <div style="text-align: center;padding-top:50px;">
+        <div>年月日单个选择，无最大最小值</div>
+        <div class="c-datepicker-date-editor c-datepicker-single-editor J-datepicker-day mt10">
+          <i class="c-datepicker-range__icon kxiconfont icon-clock"></i>
+          <input type="text" autocomplete="off" name="" placeholder="选择日期" class=" c-datepicker-data-input only-date" value="">
+        </div>
+    </div>
+    <i class="c-datepicker-input__icon c-datepicker-range__close-icon"></i>
+   <script src="http://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+    <script src="../js/plugins/moment.min.js"></script>
+    <script src="../js/datepicker.all.min.js"></script>
+    <script type="text/javascript">
+      $(function(){
+          //年月日单个
+          $('.J-datepicker-day').datePicker({
+            hasShortcut: true,
+            format:'YYYY-MM-DD',
+            shortcutOptions: [
+              {
+                name: '今天',
+                day: '0'
+              }, 
+              {
+                name: '昨天',
+                day: '-1'
+              }, 
+              {
+                name: '前天',
+                day: '-2'
+              },
+              {
+                name: '一周前',
+                day: '-7'
+              }
+            ]
+          });
+          
+          
+      });
+    </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+
+    <!--header-->
+  	<nav class="navbar navbar-expand-sm navbar-light fixed-top bg-theme1-top pl-0" bg-theme-int='1' id="header">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse bg-theme1-top pl-0" id="navbarToggler">
+    	  <a class="text-center" href="" id="header-brand"><!-- <img src="__ADMIN__/images/logo.png" width="200" height="48" alt="Brand"> -->Brand</a>
+
+        <!--顶部模块菜单加载-->
+        <ul class="navbar-nav mr-auto" id="module">
+        <{notempty name="topAuth"}>
+          <{foreach $topAuth as $module}>
+          <li class="nav-item <{if $module['title']=='首页'}>active nav-chose<{/if}>" onclick="module_click(this, <{$module.id}>)">
+            <a class="nav-link text-white pt-0 pb-0 btn-lg" href="javascript:void(0)"><{$module['title']}></a>
+          </li>
+          <{/foreach}>
+        <{/notempty}>
+        </ul>
+        
+        <!--用户详情、换肤、退出功能项-->
+        <ul class="navbar-nav" id="module-action">
+          <li class="nav-item pr-2">
+            <a href="javacript:void(0)" class="nav-link pt-0 pb-0 btn text-white" id="user-info">
+              <img class="rounded-circle" src="__ADMIN__/<{$sysUser.portrait}>" width="38" height="38" alt="用户头像">
+            </a>
+          </li>
+          <li class="nav-item pr-2"><a class="nav-link btn text-white" id="change-theme" href="#">换肤</a></li>
+          <li class="nav-item pr-2"><a class="nav-link btn text-white" id="more-action" href="#">更多</a></li>
+          <li class="nav-item pr-2"><a class="nav-link btn text-white" href="<{:url('admin/login/logout')}>" id="logout">退出</a></li>
+        </ul>
+      </div>
+  	</nav>
+    <!--end-header-->
+
+  <div>
+    <!--user profile card-->
+    <div class="card bg-white text-center shadow hide" id="user-info-card">
+      <div class="card-header">
+        <img class="rounded-circle" width="150" height="150" src="__ADMIN__/<{$sysUser.portrait}>" alt="Card image cap" title="修改头像" style="cursor:pointer;" onclick="actionModal('admin/sys_user/portrait', '编辑头像')">
+        <h3><{$sysUser.username}></h3>
+        <p>注册时间：<{$sysUser.create_time}></p>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-sm btn-primary pull-left" onclick="actionModal('admin/sys_user/detail', '个人中心')">个人中心</button>
+        <button class="btn btn-sm btn-success pull-right" onclick="actionModal('admin/sys_user/editpsd', '修改密码')">修改密码</button>
+      </div>
+    </div>
+
+    <!--change theme card-->
+    <div class="card bg-wihte text-center shadow hide" id="change-theme-card">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item p-0"><button class="btn bg-theme1-top text-white w-100" style="border-bottom: 1px solid #ddd;">风格一</button></li>
+        <li class="list-group-item p-0"><button class="btn bg-theme2-top text-white w-100">风格二</button></li>
+        <li class="list-group-item p-0"><button class="btn bg-theme3-top text-white w-100">风格三</button></li>
+        <li class="list-group-item p-0"><button class="btn bg-theme4-top text-white w-100">风格四</button></li>
+        <li class="list-group-item p-0"><button class="btn bg-theme5-top text-white w-100">风格五</button></li>
+        <li class="list-group-item p-0"><button class="btn bg-theme6-top text-white w-100">风格六</button></li>
+      </ul>
+    </div>
+
+    <!--more 更多操作放这里下拉-->
+    <div class="card bg-wihte text-center shadow hide" id="more-action-card">
+      <ul class="list-group list-group-flush">          
+        <li class="list-group-item p-0"><button class="btn text-white w-100 bg-info" id="clear-chache" style="border-bottom: 1px solid #ddd;">清缓存</button></li>
+        <li class="list-group-item p-0"><button class="btn text-white w-100 bg-info" id="full-screen">全屏</button></li>
+        <li class="list-group-item p-0"><button class="btn text-white w-100 bg-info" id="lock-screen">锁屏</button></li>
+      </ul>
+    </div>
+  </div>
+
+  

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="__BOOTSTRAP__/css/bootstrap.min.css" crossorigin="anonymous">
+    <!-- FontAwesome CSS 所有图标请参照http://www.fontawesome.com.cn/faicons/-->
+    <link rel="stylesheet" href="__FONTAWESOME__/css/font-awesome.min.css" crossorigin="anonymous">
+    <!--bootstrap-table CSS-->
+    <link rel="stylesheet" href="__BOOTSTRAP-TABLE__/bootstrap-table.min.css" crossorigin="anonymous">
+    <!-- admin-main CSS -->
+    <link rel="stylesheet" href="__ADMIN__/css/main.css" crossorigin="anonymous">
+    <!--Bootstrap fileinput css-->
+    <link href="__ADMIN__/css/fileinput.min.css" media="all" rel="stylesheet">
+    <!-- jQuery  Bootstrap JS -->
+    <script src="__BOOTSTRAP__/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script src="__BOOTSTRAP__/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <!--moment JS-->
+    <script src="__DATEPICKER__/moment.min.js" crossorigin="anonymous"></script>
+    <!--bootstrap-table JS-->
+    <script src="__BOOTSTRAP-TABLE__/bootstrap-table.min.js" crossorigin="anonymous"></script>
+    <script src="__BOOTSTRAP-TABLE__/bootstrap-table-zh-CN.min.js" crossorigin="anonymous"></script>
+    <script src="__BOOTSTRAP-TABLE__/FileSaver.min.js" crossorigin="anonymous"></script>
+    <script src="__BOOTSTRAP-TABLE__/xlsx.core.min.js" crossorigin="anonymous"></script>
+    <script src="__BOOTSTRAP-TABLE__/jspdf.min.js" crossorigin="anonymous"></script>
+    <script src="__BOOTSTRAP-TABLE__/jspdf.plugin.autotable.js" crossorigin="anonymous"></script>
+    <script src="__BOOTSTRAP-TABLE__/es6-promise.auto.min.js" crossorigin="anonymous"></script>
+    <script src="__BOOTSTRAP-TABLE__/html2canvas.min.js" crossorigin="anonymous"></script>
+    <script src="__BOOTSTRAP-TABLE__/tableExport-jquery.plugin.min.js" crossorigin="anonymous"></script>
+    <script src="__BOOTSTRAP-TABLE__/bootstrap-table-export.js" crossorigin="anonymous"></script>
+    <!-- admin-main JS -->
+    <script src="__ADMIN__/js/main.js" crossorigin="anonymous"></script>
+    <!--Bootstrap fileinput Js-->
+    <script src = "__ADMIN__/js/piexif.min.js"></script>
+    <script src = "__ADMIN__/js/fileinput.min.js"></script>
+    <script src = "__ADMIN__/js/zh.js"></script>
+    <script src = "__ADMIN__/js/theme.min.js"></script>
+    <script>
+        /*初始化，方便后续使用*/
+        var domain = "<{$domain}>"; //根域名, 后续用到的所有访问地址都用到这个拼接，domain + '模块名/控制器名/方法名'，如 url = domain + 'admin/sys_user/edit'
+
+        $(document).ajaxError(function(event,xhr,options){ //ajax请求失败时的提示，这样就不用每个ajax请求去判断是否成功
+            Alert("Error！" + xhr.status + ' ' + xhr.statusText + "<br>" + 'request_url：' + options.url);
+        });
+    </script>
+    <title><{$title ?? 'dms_后台管理'}></title>
+  </head>
+  <body>
+    <{block name="header"}><{include file="../application/admin/view/layout/header.html" /}><{/block}>
+
+    <{block name="left_nume"}><{include file="../application/admin/view/layout/left_menu.html" /}><{/block}>
+
+    <{block name="main"}><{include file="../application/admin/view/layout/main.html" /}><{/block}>
+
+    <{block name="footer"}><{include file="../application/admin/view/layout/footer.html" /}><{/block}>
+</body>
+</html>
+  

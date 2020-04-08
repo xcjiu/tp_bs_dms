@@ -1,0 +1,92 @@
+<{$extraStyle}>
+
+<!--form-->
+<form id="builder-form" style="font-size: 18px;">
+  
+  <{$formHTML}>
+  
+  <{empty name="delBtn"}>
+    <button type="submit" class="btn btn-primary btn-lg btn-block">提 交</button>
+  <{/empty}>
+</form>
+
+<{$extraHtml}>
+
+<script>
+//多级分类选项函数
+function classSelects($url, inputText, pidValue, pid){
+  var url = domain + $url + "?pid=" + pidValue;
+  var inputValue;
+  var currentValue = $('#class-input').val();
+  
+  if(currentValue){
+    if(pid === $('#pid').val() && currentValue.lastIndexOf('/')>1) {
+      inputValue = currentValue.substr(0, currentValue.lastIndexOf('/')) + '/' + inputText;
+    } else {
+      inputValue = currentValue + '/' + inputText;
+    }
+  } else {
+    inputValue = inputText
+  }
+  $('#class-input').val(inputValue);
+  $('#cid').val(pidValue);
+  $.ajax({
+    url: url,
+    type: 'GET',
+    //这两个设置项必填
+    contentType: false,
+    processData: false,
+    success: function(result,status,xhr){
+      if(result.length > 0){
+        curpid = result[0].pid;
+        $('#pid').val(curpid); //记录一下最后一个父级pid的值
+        $('#class-input').attr('disabled', true)
+        var selectDom = '<select onchange="classSelects('+"'"+$url+"'"+',this.options[this.selectedIndex].text,this.value, curpid)" style="padding:5px 8px;"><option selected disabled>'+"'请选择'"+'</option>';
+        for(index in result){
+          selectDom += '<option value="'+result[index].id+'">'+result[index].name+'</option>'
+        }
+        selectDom += '</select>';
+        $('#class-input').parent().append(selectDom)
+      }
+    }
+  });
+}
+
+var method = "<{$method}>";
+var url = domain + "<{$submitUrl}>";
+$("#builder-form").submit(function(event){
+  event.preventDefault(); //阻止表单提交
+  //var data = method=="GET" ? $("#builder-form").serialize() : $("#builder-form").serializeArray();
+  var formData = new FormData($('#builder-form')[0]); //用上面那种形式无法处理好文件上传！
+  var files = $('.form-group').find('input[type="file"]'); //涉及到文件上传时
+  if(files.length == 1){ //单文件上传
+    formData.append('files', files[0].files[0]);
+  }else if(files.length > 1){ //多文件上传
+    for(file in files){
+      formData.append('files[]', file[0].files[0]);
+    }
+  }
+  $.ajax({
+    url: url,
+    type: method,
+    data: formData,
+    //这两个设置项必填
+    contentType: false,
+    processData: false,
+    success: function(result,status,xhr){
+      //console.log(data);
+      if(result.code == 1){ 
+        $('#action-modal').modal('hide');
+        Alert(result.msg, 'alert-success');
+        $('#data-table').bootstrapTable('refresh');
+      }else{
+        $('#action-modal').modal('hide');
+        Alert(result.msg, 'alert-danger');
+        return false;
+      }
+    }
+  });
+});
+</script>
+
+<{$extraJs}>

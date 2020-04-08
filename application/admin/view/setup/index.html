@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Setup</title>
+  <style>
+    body {
+      background: #a0c4d6;
+    }
+    form {
+      width: 600px;
+      height: auto;
+      margin: 30px auto;
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+    h1 {
+      color: #157594;
+    }
+    .input-div {
+      margin-top: 20px;
+    }
+    .input-div span {
+      display: inline-block;
+      width: 30%;
+      text-align: left;
+    }
+    .input-div input {
+      width: 60%;
+      padding: 8px;
+      font-size: 22px;
+    }
+    button {
+      background: lightblue;
+      width:100%;
+      margin-top: 20px;
+      padding:10px;
+      font-size: 30px;
+      font-weight: bold;
+    }
+    #error-msg {
+      color: red;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <form>
+    <h1>安 装 (tp_bs_dms)</h1>
+    <div class="input-div">
+      <span>服务器地址</span>：
+      <input id="hostname" name="hostname" value="127.0.0.1" required />
+    </div>
+    <div class="input-div">
+      <span>数据库名</span>：
+      <input id="database" name="database" required />
+    </div>
+    <div class="input-div">
+      <span>用户名</span>：
+      <input id="username" name="username" required />
+    </div>
+    <div class="input-div">
+      <label for="password"> <span>密码</span>：
+        <input id="password" name="password" required />
+      </label>
+    </div>
+    <div class="input-div">
+      <label for="hostport"> <span>端口号</span>：
+        <input id="hostport" name="hostport" value="3306" required />
+      </label>
+    </div>
+    <button type="submit" onclick="formSubmit()">确 定</button>
+  </form>
+</body>
+  <script>
+  function formSubmit()
+  {
+    if(event && event.preventDefault){
+      event.preventDefault(); //阻止默认提交
+    }
+    var xmlhttp;
+    //创建xmlhttp
+    if (window.XMLHttpRequest) {
+      xmlhttp = new XMLHttpRequest();
+    }else{
+      xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
+    }
+    var actionRequest = '<{$action}>';
+    //连接和发送
+    if (xmlhttp != null) {
+      xmlhttp.open('POST', actionRequest ,true);
+
+      //post请求一定要添加请求头才行不然会报错,而且要放在open()之后
+      xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+      var formDatas = {
+        "hostname": document.getElementById('hostname').value,
+        "database": document.getElementById('database').value,
+        "username": document.getElementById('username').value,
+        "password": document.getElementById('password').value,
+        "hostport": document.getElementById('hostport').value,
+      };
+      var paramsStr = '';
+      for (let key in formDatas) {
+        paramsStr += key + '=' + formDatas[key] + '&&'
+      }
+      xmlhttp.send(paramsStr);
+      xmlhttp.onreadystatechange = callBack;
+    }
+    
+    //接收
+    function callBack() {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        //var data = JSON.parse(xmlhttp.responseText); //这里需要进行json转换
+        var data = xmlhttp.responseText;
+        console.log(data)
+        if (data === 'success') { 
+          alert('数据库创建成功！登录初始账号：admin，密码: admin123');
+          window.location.href = actionRequest.substring(0, actionRequest.lastIndexOf('admin')) + 'admin/login/index'
+        } else {
+          alert(data)
+        }
+      }
+    }
+  }
+    
+  </script>
+</html>
